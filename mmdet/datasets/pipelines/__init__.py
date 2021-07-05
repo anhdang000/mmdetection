@@ -14,7 +14,7 @@ from .transforms import (Albu, CutOut, Expand, MinIoURandomCrop, Normalize,
                          SegRescale)
 from .loadingLP import LoadImageFromFileLP, LoadAnnotationsLP                         
 from .transformsLP import (ResizeLP, RandomFlipLP, NormalizeLP, PadLP)     
-from .formatingLP import ImageToTensorLP, DefaultFormatBundleLP, CollectLP
+from .formatingLP import ImageToTensorLP, DefaultFormatBundleLP, CollectLP, ToTensorLP
 from .test_time_augLP import MultiScaleFlipAugLP            
 
 __all__ = [
@@ -28,5 +28,6 @@ __all__ = [
     'Rotate', 'ColorTransform', 'EqualizeTransform', 'BrightnessTransform',
     'ContrastTransform', 'Translate', 'RandomShift', 'LoadImageFromFileLP',
     'LoadAnnotationsLP', 'ResizeLP', 'RandomFlipLP', 'NormalizeLP', 'PadLP',
-    'ImageToTensorLP', 'DefaultFormatBundleLP', 'CollectLP', 'MultiScaleFlipAugLP'
+    'ImageToTensorLP', 'DefaultFormatBundleLP', 'CollectLP', 'ToTensorLP', 
+    'MultiScaleFlipAugLP'
 ]

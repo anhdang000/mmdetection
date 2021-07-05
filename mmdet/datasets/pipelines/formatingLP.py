@@ -34,7 +34,7 @@ def to_tensor(data):
 
 
 @PIPELINES.register_module()
-class ToTensor:
+class ToTensorLP:
     """Convert some results to :obj:`torch.Tensor` by given keys.
 
     Args:
