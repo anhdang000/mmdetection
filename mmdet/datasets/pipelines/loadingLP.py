@@ -56,17 +56,30 @@ class LoadImageFromFileLP:
         else:
             filename = results['img_info']['filename']
 
+        if results['lp_prefix'] is not None:
+            lp_name = osp.join(results['lp_prefix'],
+                                results['img_info']['filename'])
+        else:
+            lp_name = results['img_info']['filename']
+
         img_bytes = self.file_client.get(filename)
         img = mmcv.imfrombytes(img_bytes, flag=self.color_type)
+
+        lp_bytes = self.file_client.get(lp_name)
+        lp = mmcv.imfrombytes(lp_bytes, flag=self.color_type)
+
         if self.to_float32:
             img = img.astype(np.float32)
+            lp = lp.astype(np.float32)
 
         results['filename'] = filename
+        results['lp_name'] = lp_name
         results['ori_filename'] = results['img_info']['filename']
         results['img'] = img
+        results['lp'] = lp
         results['img_shape'] = img.shape
         results['ori_shape'] = img.shape
-        results['img_fields'] = ['img']
+        results['img_fields'] = ['img', 'lp']
         return results
 
     def __repr__(self):

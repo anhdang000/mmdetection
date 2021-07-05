@@ -121,7 +121,7 @@ train_pipeline = [
         to_rgb=True),
     dict(type='PadLP', size_divisor=32),
     dict(type='DefaultFormatBundleLP'),
-    dict(type='CollectLP', keys=['img', 'gt_bboxes', 'gt_labels'])
+    dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
 ]
 test_pipeline = [
     dict(type='LoadImageFromFileLP'),
@@ -138,8 +138,8 @@ test_pipeline = [
                 std=[58.395, 57.12, 57.375],
                 to_rgb=True),
             dict(type='PadLP', size_divisor=32),
-            dict(type='ImageToTensorLP', keys=['img']),
-            dict(type='CollectLP', keys=['img'])
+            dict(type='ImageToTensorLP', keys=['img', 'lp']),
+            dict(type='CollectLP', keys=['img', 'lp'])
         ])
 ]
 data = dict(
@@ -149,6 +149,7 @@ data = dict(
         type='KittiDatasetLP',
         ann_file='train.txt',
         img_prefix='training/image_2',
+        lp_prefix='training/lp_image',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -161,13 +162,14 @@ data = dict(
                 to_rgb=True),
             dict(type='PadLP', size_divisor=32),
             dict(type='DefaultFormatBundleLP'),
-            dict(type='CollectLP', keys=['img', 'gt_bboxes', 'gt_labels'])
+            dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
         ],
         data_root='../stereo_datasets'),
     val=dict(
         type='KittiDatasetLP',
         ann_file='val.txt',
         img_prefix='training/image_2',
+        lp_prefix='training/lp_image',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -183,8 +185,8 @@ data = dict(
                         std=[58.395, 57.12, 57.375],
                         to_rgb=True),
                     dict(type='PadLP', size_divisor=32),
-                    dict(type='ImageToTensorLP', keys=['img']),
-                    dict(type='CollectLP', keys=['img'])
+                    dict(type='ImageToTensorLP', keys=['img', 'lp']),
+                    dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
         data_root='../stereo_datasets'),
@@ -192,6 +194,7 @@ data = dict(
         type='KittiDatasetLP',
         ann_file='val.txt',
         img_prefix='training/image_2',
+        lp_prefix='training/lp_image',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -207,8 +210,8 @@ data = dict(
                         std=[58.395, 57.12, 57.375],
                         to_rgb=True),
                     dict(type='PadLP', size_divisor=32),
-                    dict(type='ImageToTensorLP', keys=['img']),
-                    dict(type='CollectLP', keys=['img'])
+                    dict(type='ImageToTensorLP', keys=['img', 'lp']),
+                    dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
         data_root='../stereo_datasets'))

@@ -201,7 +201,7 @@ class ResizeLP:
         results['scale_idx'] = scale_idx
 
     def _resize_img(self, results):
-        """Resize images with ``results['scale']``."""
+        """Resize images and Local Pattern feature with ``results['scale']``."""
         for key in results.get('img_fields', ['img']):
             if self.keep_ratio:
                 img, scale_factor = mmcv.imrescale(
@@ -222,7 +222,7 @@ class ResizeLP:
                     return_scale=True,
                     backend=self.backend)
             results[key] = img
-
+            
             scale_factor = np.array([w_scale, h_scale, w_scale, h_scale],
                                     dtype=np.float32)
             results['img_shape'] = img.shape
@@ -230,6 +230,7 @@ class ResizeLP:
             results['pad_shape'] = img.shape
             results['scale_factor'] = scale_factor
             results['keep_ratio'] = self.keep_ratio
+
 
     def _resize_bboxes(self, results):
         """Resize bounding boxes with ``results['scale_factor']``."""
