@@ -105,7 +105,7 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDataset'
+dataset_type = 'KittiDatasetLP'
 data_root = '../stereo_datasets'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -146,7 +146,7 @@ data = dict(
     samples_per_gpu=3,
     workers_per_gpu=3,
     train=dict(
-        type='KittiDataset',
+        type='KittiDatasetLP',
         ann_file='train.txt',
         img_prefix='training/image_2',
         pipeline=[
@@ -165,7 +165,7 @@ data = dict(
         ],
         data_root='../stereo_datasets'),
     val=dict(
-        type='KittiDataset',
+        type='KittiDatasetLP',
         ann_file='val.txt',
         img_prefix='training/image_2',
         pipeline=[
@@ -189,7 +189,7 @@ data = dict(
         ],
         data_root='../stereo_datasets'),
     test=dict(
-        type='KittiDataset',
+        type='KittiDatasetLP',
         ann_file='val.txt',
         img_prefix='training/image_2',
         pipeline=[

@@ -67,7 +67,7 @@ class KittiDataset(CustomDataset):
         return data_infos
 
 
-class KittiLPDataset(CustomDataset):
+class KittiDatasetLP(CustomDataset):
     CLASSES = (
         'Car', 'Van', 'Truck', 'Pedestrian', 'Person_sitting', 
         'Cyclist', 'Tram', 'Misc', 'DontCare'
