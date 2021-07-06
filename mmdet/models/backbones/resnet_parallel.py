@@ -1,5 +1,6 @@
 import warnings
 
+import torch
 import torch.nn as nn
 import torch.utils.checkpoint as cp
 from mmcv.cnn import build_conv_layer, build_norm_layer, build_plugin_layer
@@ -303,7 +304,7 @@ class Bottleneck(BaseModule):
 
 @BACKBONES.register_module()
 class ResNetParallel(BaseModule):
-    """ResNet backbone.
+    """ResNetParallel backbone.
 
     Args:
         depth (int): Depth of resnet, from {18, 34, 50, 101, 152}.
@@ -392,7 +393,6 @@ class ResNetParallel(BaseModule):
         self.zero_init_residual = zero_init_residual
         if depth not in self.arch_settings:
             raise KeyError(f'invalid depth {depth} for resnet')
-
         block_init_cfg = None
         assert not (init_cfg and pretrained), \
             'init_cfg and pretrained cannot be setting at the same time'
@@ -452,7 +452,6 @@ class ResNetParallel(BaseModule):
         self.block, stage_blocks = self.arch_settings[depth]
         self.stage_blocks = stage_blocks[:num_stages]
         self.inplanes = stem_channels
-
         self._make_stem_layer(in_channels, stem_channels)
 
         self.res_layers = []
@@ -627,21 +626,43 @@ class ResNetParallel(BaseModule):
             for param in m.parameters():
                 param.requires_grad = False
 
-    def forward(self, img, lp):
-        """Forward function."""
+    def forward(self, x1, x2):
+        """
+            Forward function.
+            `x1`: image
+            `x2`: local pattern feature
+        """
         if self.deep_stem:
-            x = self.stem(x)
+            x1 = self.stem(x1)
+            x2 = self.stem(x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
+            
         else:
-            x = self.conv1(x)
-            x = self.norm1(x)
-            x = self.relu(x)
-        x = self.maxpool(x)
+            x2 = x2.permute(0, 3, 1, 2)
+            x1 = self.conv1(x1)
+            x2 = self.conv1(x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
+            print(x1.shape, x2.shape)
+            x1 = self.norm1(x1)
+            x1 = self.relu(x1)
+            x2 = self.norm1(x2)
+            x2 = self.relu(x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
+
+        x1 = self.maxpool(x1)
+        x2 = self.maxpool(x2)
         outs = []
         for i, layer_name in enumerate(self.res_layers):
             res_layer = getattr(self, layer_name)
-            x = res_layer(x)
+            x1 = res_layer(x1)
+            x2 = res_layer(x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
             if i in self.out_indices:
-                outs.append(x)
+                outs.append(x1)
         return tuple(outs)
 
     def train(self, mode=True):

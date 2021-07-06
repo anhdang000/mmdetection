@@ -3,11 +3,11 @@ import warnings
 import torch
 
 from ..builder import DETECTORS, build_backbone, build_head, build_neck
-from .base import BaseDetector
+from .base_parallel import BaseDetectorParallel
 
 
 @DETECTORS.register_module()
-class TwoStageDetectorParallel(BaseDetector):
+class TwoStageDetectorParallel(BaseDetectorParallel):
     """Base class for two-stage detectors.
 
     Two-stage detectors typically consisting of a region proposal network and a

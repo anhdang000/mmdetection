@@ -1,9 +1,9 @@
 from ..builder import DETECTORS
-from .two_stage import TwoStageDetector
+from .two_stage_parallel import TwoStageDetectorParallel
 
 
 @DETECTORS.register_module()
-class FasterRCNNParallel(TwoStageDetector):
+class FasterRCNNParallel(TwoStageDetectorParallel):
     """Implementation of `Faster R-CNN <https://arxiv.org/abs/1506.01497>`_"""
 
     def __init__(self,

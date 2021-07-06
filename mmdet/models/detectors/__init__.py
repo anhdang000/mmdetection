@@ -34,6 +34,7 @@ from .yolo import YOLOV3
 from .yolof import YOLOF
 from .faster_rcnn_parallel import FasterRCNNParallel
 from .two_stage_parallel import TwoStageDetectorParallel
+from .base_parallel import BaseDetectorParallel
 
 __all__ = [
     'ATSS', 'BaseDetector', 'SingleStageDetector', 'TwoStageDetector', 'RPN',
@@ -43,5 +44,5 @@ __all__ = [
     'NASFCOS', 'PointRend', 'GFL', 'CornerNet', 'PAA', 'YOLOV3', 'YOLACT',
     'VFNet', 'DETR', 'TridentFasterRCNN', 'SparseRCNN', 'SCNet',
     'DeformableDETR', 'AutoAssign', 'YOLOF', 'CenterNet', 'FasterRCNNParallel',
-    'TwoStageDetectorParallel'
+    'TwoStageDetectorParallel', 'BaseDetectorParallel'
 ]
