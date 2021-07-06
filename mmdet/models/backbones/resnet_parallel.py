@@ -644,7 +644,6 @@ class ResNetParallel(BaseModule):
             x2 = self.conv1(x2)
             x_merge = torch.cat((x1, x2), dim=1)
             x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
-            print(x1.shape, x2.shape)
             x1 = self.norm1(x1)
             x1 = self.relu(x1)
             x2 = self.norm1(x2)
