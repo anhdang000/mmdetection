@@ -1,5 +1,5 @@
 model = dict(
-    type='FasterRCNN',
+    type='FasterRCNNParallel',
     backbone=dict(
         type='ResNetParallel',
         depth=50,
@@ -16,7 +16,7 @@ model = dict(
         out_channels=256,
         num_outs=5),
     rpn_head=dict(
-        type='RPNHeadMerge',
+        type='RPNHead',
         in_channels=256,
         feat_channels=256,
         anchor_generator=dict(

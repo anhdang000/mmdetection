@@ -107,7 +107,7 @@ class RPNHeadMerge(AnchorHead):
                 (n,) tensor where each item is the predicted class label of the
                 corresponding box.
         """
-        assert with_nms, '``with_nms`` in RPNHeadMerge should always True'
+        assert with_nms, '``with_nms`` in RPNHead should always True'
         assert len(cls_scores) == len(bbox_preds)
         num_levels = len(cls_scores)
         device = cls_scores[0].device

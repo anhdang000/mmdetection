@@ -388,7 +388,7 @@ class ResNetParallel(BaseModule):
                  zero_init_residual=True,
                  pretrained=None,
                  init_cfg=None):
-        super(ResNet, self).__init__(init_cfg)
+        super(ResNetParallel, self).__init__(init_cfg)
         self.zero_init_residual = zero_init_residual
         if depth not in self.arch_settings:
             raise KeyError(f'invalid depth {depth} for resnet')
@@ -627,7 +627,7 @@ class ResNetParallel(BaseModule):
             for param in m.parameters():
                 param.requires_grad = False
 
-    def forward(self, x):
+    def forward(self, img, lp):
         """Forward function."""
         if self.deep_stem:
             x = self.stem(x)
@@ -647,25 +647,10 @@ class ResNetParallel(BaseModule):
     def train(self, mode=True):
         """Convert the model into training mode while keep normalization layer
         freezed."""
-        super(ResNet, self).train(mode)
+        super(ResNetParallel, self).train(mode)
         self._freeze_stages()
         if mode and self.norm_eval:
             for m in self.modules():
                 # trick: eval have effect on BatchNorm only
                 if isinstance(m, _BatchNorm):
                     m.eval()
-
-
-@BACKBONES.register_module()
-class ResNetV1d(ResNet):
-    r"""ResNetV1d variant described in `Bag of Tricks
-    <https://arxiv.org/pdf/1812.01187.pdf>`_.
-
-    Compared with default ResNet(ResNetV1b), ResNetV1d replaces the 7x7 conv in
-    the input stem with three 3x3 convs. And in the downsampling block, a 2x2
-    avg_pool with stride 2 is added before conv, whose stride is changed to 1.
-    """
-
-    def __init__(self, **kwargs):
-        super(ResNetV1d, self).__init__(
-            deep_stem=True, avg_down=True, **kwargs)
