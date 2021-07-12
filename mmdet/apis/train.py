@@ -42,7 +42,6 @@ def train_detector(model,
                    timestamp=None,
                    meta=None):
     logger = get_root_logger(cfg.log_level)
-
     # prepare data loaders
     dataset = dataset if isinstance(dataset, (list, tuple)) else [dataset]
     if 'imgs_per_gpu' in cfg.data:
@@ -69,7 +68,7 @@ def train_detector(model,
             dist=distributed,
             seed=cfg.seed) for ds in dataset
     ]
-
+    
     # put model on gpus
     if distributed:
         find_unused_parameters = cfg.get('find_unused_parameters', False)

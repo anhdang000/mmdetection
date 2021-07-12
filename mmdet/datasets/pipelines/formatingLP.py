@@ -127,7 +127,6 @@ class DefaultFormatBundleLP:
             dict: The result dict contains the data that is formatted with \
                 default bundle.
         """
-
         if 'img' in results:
             img = results['img']
             # add default meta keys
@@ -136,6 +135,13 @@ class DefaultFormatBundleLP:
                 img = np.expand_dims(img, -1)
             img = np.ascontiguousarray(img.transpose(2, 0, 1))
             results['img'] = DC(to_tensor(img), stack=True)
+        if 'lp' in results:
+            lp = results['lp']
+            if len(lp.shape) < 3:
+                lp = np.expand_dims(lp, -1)
+            lp = np.ascontiguousarray(lp.transpose(2, 0, 1))
+            results['lp'] = DC(to_tensor(lp), stack=True)
+    
         for key in ['proposals', 'gt_bboxes', 'gt_bboxes_ignore', 'gt_labels']:
             if key not in results:
                 continue
@@ -246,6 +252,7 @@ class CollectLP:
         data['img_metas'] = DC(img_meta, cpu_only=True)
         for key in self.keys:
             data[key] = results[key]
+        
         return data
 
     def __repr__(self):

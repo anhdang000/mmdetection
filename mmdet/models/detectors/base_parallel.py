@@ -108,7 +108,7 @@ class BaseDetectorParallel(BaseModule, metaclass=ABCMeta):
         else:
             raise NotImplementedError
 
-    def forward_test(self, imgs, img_metas, **kwargs):
+    def forward_test(self, imgs, lps, img_metas, **kwargs):
         """
         Args:
             imgs (List[Tensor]): the outer list indicates test-time
@@ -143,7 +143,7 @@ class BaseDetectorParallel(BaseModule, metaclass=ABCMeta):
             # proposals.
             if 'proposals' in kwargs:
                 kwargs['proposals'] = kwargs['proposals'][0]
-            return self.simple_test(imgs[0], img_metas[0], **kwargs)
+            return self.simple_test(imgs[0], lps[0], img_metas[0], **kwargs)
         else:
             assert imgs[0].size(0) == 1, 'aug test does not support ' \
                                          'inference with batch size ' \

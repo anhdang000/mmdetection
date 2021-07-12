@@ -534,6 +534,7 @@ class PadLP:
         self._pad_img(results)
         self._pad_masks(results)
         self._pad_seg(results)
+        
         return results
 
     def __repr__(self):
@@ -557,11 +558,13 @@ class NormalizeLP:
             default is true.
     """
 
-    def __init__(self, mean, std, to_rgb=True):
+    def __init__(self, mean, std, mean_lp, std_lp, to_rgb=True):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
+        self.mean_lp = mean_lp
+        self.std_lp = std_lp
         self.to_rgb = to_rgb
-
+        
     def __call__(self, results):
         """Call function to normalize images.
 
@@ -572,9 +575,10 @@ class NormalizeLP:
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
-        for key in results.get('img_fields', ['img']):
-            results[key] = mmcv.imnormalize(results[key], self.mean, self.std,
-                                            self.to_rgb)
+        results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
+                                        self.to_rgb)
+        results['lp'] = mmcv.imnormalize(results['lp'], self.mean_lp, self.std_lp,
+                                        self.to_rgb)
         results['img_norm_cfg'] = dict(
             mean=self.mean, std=self.std, to_rgb=self.to_rgb)
         return results

@@ -147,7 +147,6 @@ class TwoStageDetector(BaseDetector):
                                                  gt_bboxes_ignore, gt_masks,
                                                  **kwargs)
         losses.update(roi_losses)
-
         return losses
 
     async def async_simple_test(self,

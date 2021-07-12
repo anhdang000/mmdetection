@@ -11,7 +11,7 @@ model = dict(
         style='pytorch',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
-        type='FPNParallel',
+        type='FPN',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=5),
@@ -118,6 +118,8 @@ train_pipeline = [
         type='NormalizeLP',
         mean=[123.675, 116.28, 103.53],
         std=[58.395, 57.12, 57.375],
+        mean_lp=[118, 118, 100],
+        std_lp=[89, 90, 85],
         to_rgb=True),
     dict(type='PadLP', size_divisor=32),
     dict(type='DefaultFormatBundleLP'),
@@ -136,6 +138,8 @@ test_pipeline = [
                 type='NormalizeLP',
                 mean=[123.675, 116.28, 103.53],
                 std=[58.395, 57.12, 57.375],
+                mean_lp=[118, 118, 100],
+                std_lp=[89, 90, 85],
                 to_rgb=True),
             dict(type='PadLP', size_divisor=32),
             dict(type='ImageToTensorLP', keys=['img', 'lp']),
@@ -159,6 +163,8 @@ data = dict(
                 type='NormalizeLP',
                 mean=[123.675, 116.28, 103.53],
                 std=[58.395, 57.12, 57.375],
+                mean_lp=[118, 118, 100],
+                std_lp=[89, 90, 85],
                 to_rgb=True),
             dict(type='PadLP', size_divisor=32),
             dict(type='DefaultFormatBundleLP'),
@@ -183,6 +189,8 @@ data = dict(
                         type='NormalizeLP',
                         mean=[123.675, 116.28, 103.53],
                         std=[58.395, 57.12, 57.375],
+                        mean_lp=[118, 118, 100],
+                        std_lp=[89, 90, 85],
                         to_rgb=True),
                     dict(type='PadLP', size_divisor=32),
                     dict(type='ImageToTensorLP', keys=['img', 'lp']),
@@ -208,6 +216,8 @@ data = dict(
                         type='NormalizeLP',
                         mean=[123.675, 116.28, 103.53],
                         std=[58.395, 57.12, 57.375],
+                        mean_lp=[118, 118, 100],
+                        std_lp=[89, 90, 85],
                         to_rgb=True),
                     dict(type='PadLP', size_divisor=32),
                     dict(type='ImageToTensorLP', keys=['img', 'lp']),
@@ -224,9 +234,9 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[8, 11])
-runner = dict(type='EpochBasedRunner', max_epochs=12)
-checkpoint_config = dict(interval=12)
-log_config = dict(interval=10, hooks=[dict(type='TextLoggerHook')])
+runner = dict(type='EpochBasedRunner', max_epochs=40)
+checkpoint_config = dict(interval=1)
+log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'

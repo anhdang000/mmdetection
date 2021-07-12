@@ -126,7 +126,6 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
             dict[str, Tensor]: a dictionary of loss components
         """
         x = self.extract_feat(img, lp)
-
         losses = dict()
 
         # RPN forward and loss
@@ -149,7 +148,6 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
                                                  gt_bboxes_ignore, gt_masks,
                                                  **kwargs)
         losses.update(roi_losses)
-
         return losses
 
     async def async_simple_test(self,
@@ -170,11 +168,11 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
         return await self.roi_head.async_simple_test(
             x, proposal_list, img_meta, rescale=rescale)
 
-    def simple_test(self, img, img_metas, proposals=None, rescale=False):
+    def simple_test(self, img, lp, img_metas, proposals=None, rescale=False):
         """Test without augmentation."""
 
         assert self.with_bbox, 'Bbox head must be implemented.'
-        x = self.extract_feat(img)
+        x = self.extract_feat(img, lp)
         if proposals is None:
             proposal_list = self.rpn_head.simple_test_rpn(x, img_metas)
         else:
@@ -183,13 +181,13 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
         return self.roi_head.simple_test(
             x, proposal_list, img_metas, rescale=rescale)
 
-    def aug_test(self, imgs, img_metas, rescale=False):
+    def aug_test(self, imgs, lps, img_metas, rescale=False):
         """Test with augmentations.
 
         If rescale is False, then returned bboxes and masks will fit the scale
         of imgs[0].
         """
-        x = self.extract_feats(imgs)
+        x = self.extract_feats(imgs, lps)
         proposal_list = self.rpn_head.aug_test_rpn(x, img_metas)
         return self.roi_head.aug_test(
             x, proposal_list, img_metas, rescale=rescale)

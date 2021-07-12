@@ -489,6 +489,13 @@ class ResNetParallel(BaseModule):
         self.feat_dim = self.block.expansion * base_channels * 2**(
             len(self.stage_blocks) - 1)
 
+        # Convolution layers after merge
+        self.in_channels_to_merge = [64, 64, 256, 512, 1024, 2048]
+        self.conv_after_merge = [
+            nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
+            for in_channel in self.in_channels_to_merge
+            ]
+
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.
 
@@ -635,21 +642,23 @@ class ResNetParallel(BaseModule):
         if self.deep_stem:
             x1 = self.stem(x1)
             x2 = self.stem(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
-            
         else:
-            x2 = x2.permute(0, 3, 1, 2)
             x1 = self.conv1(x1)
             x2 = self.conv1(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
+
+            # x_merge = torch.cat((x1, x2), dim=1)
+            # x1 = self.conv_after_merge[0](x_merge)
+            x1 = torch.add(x1, x2)
+
             x1 = self.norm1(x1)
-            x1 = self.relu(x1)
             x2 = self.norm1(x2)
+
+            x1 = self.relu(x1)
             x2 = self.relu(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
+
+            # x_merge = torch.cat((x1, x2), dim=1)
+            # x1 = self.conv_after_merge[1](x_merge)
+            x1 = torch.add(x1, x2)
 
         x1 = self.maxpool(x1)
         x2 = self.maxpool(x2)
@@ -658,8 +667,9 @@ class ResNetParallel(BaseModule):
             res_layer = getattr(self, layer_name)
             x1 = res_layer(x1)
             x2 = res_layer(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = nn.Conv2d(x_merge.shape[1], x1.shape[1], kernel_size=1).cuda()(x_merge)
+            # x_merge = torch.cat((x1, x2), dim=1)
+            # x1 = self.conv_after_merge[2+i](x_merge)
+            x1 = torch.add(x1, x2)
             if i in self.out_indices:
                 outs.append(x1)
         return tuple(outs)

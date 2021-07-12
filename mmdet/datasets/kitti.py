@@ -21,7 +21,6 @@ class KittiDataset(CustomDataset):
         cat2label = {k: i for i, k in enumerate(self.CLASSES)}
         # load image list from file
         image_list = mmcv.list_from_file(self.ann_file)
-    
         data_infos = []
         # convert annotations to middle format
 
@@ -77,7 +76,6 @@ class KittiDatasetLP(CustomDataset):
         cat2label = {k: i for i, k in enumerate(self.CLASSES)}
         # load image list from file
         image_list = mmcv.list_from_file(self.ann_file)
-        image_list = image_list[:20]
         data_infos = []
         # convert annotations to middle format
 
