@@ -561,8 +561,8 @@ class NormalizeLP:
     def __init__(self, mean, std, mean_lp, std_lp, to_rgb=True):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
-        self.mean_lp = mean_lp
-        self.std_lp = std_lp
+        self.mean_lp = np.array(mean_lp, dtype=np.float32)
+        self.std_lp = np.array(std_lp, dtype=np.float32)
         self.to_rgb = to_rgb
         
     def __call__(self, results):
