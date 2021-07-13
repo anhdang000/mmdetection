@@ -150,7 +150,7 @@ data = dict(
     samples_per_gpu=3,
     workers_per_gpu=3,
     train=dict(
-        type='KittiDatasetLP',
+        type='KittiDatasetLP2',
         ann_file='train.txt',
         img_prefix='image/image_2',
         lp_prefix='lp/lp_image',
@@ -172,7 +172,7 @@ data = dict(
         ],
         data_root='/kaggle/input/kitti-compressed'),
     val=dict(
-        type='KittiDatasetLP',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
         lp_prefix='lp/lp_image',
@@ -199,7 +199,7 @@ data = dict(
         ],
         data_root='/kaggle/input/kitti-compressed'),
     test=dict(
-        type='KittiDatasetLP',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
         lp_prefix='lp/lp_image',
