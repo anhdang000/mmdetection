@@ -80,11 +80,11 @@ class KittiDatasetLP(CustomDataset):
         # convert annotations to middle format
 
         for image_id in tqdm(image_list, desc='Loading data'):
-            filename = f'{self.img_prefix}/{image_id}.png'
+            filename = f'{self.img_prefix}/{image_id}.jpg'
             image = mmcv.imread(filename)
             height, width = image.shape[:2]
     
-            data_info = dict(filename=f'{image_id}.png', width=width, height=height)
+            data_info = dict(filename=f'{image_id}.jpg', width=width, height=height)
     
             # load annotations
             label_prefix = self.img_prefix.replace('image_2', 'label_2')
