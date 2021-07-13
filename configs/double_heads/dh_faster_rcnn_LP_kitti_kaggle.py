@@ -105,8 +105,8 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDatasetLP'
-data_root = '/kaggle/input/lp-image'
+dataset_type = 'KittiDatasetLP2'
+data_root = '/kaggle/input/kitti_compressed'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -152,8 +152,8 @@ data = dict(
     train=dict(
         type='KittiDatasetLP',
         ann_file='train.txt',
-        img_prefix='image_2/Downloads/stereo_datasets/training/image_2',
-        lp_prefix='lp_iage/Downloads/stereo_datasets/training/lp_image',
+        img_prefix='image/image_2',
+        lp_prefix='lp/lp_image',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -170,12 +170,12 @@ data = dict(
             dict(type='DefaultFormatBundleLP'),
             dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
         ],
-        data_root='/kaggle/input/lp-image'),
+        data_root='/kaggle/input/kitti_compressed'),
     val=dict(
         type='KittiDatasetLP',
         ann_file='val.txt',
-        img_prefix='image_2/Downloads/stereo_datasets/training/image_2',
-        lp_prefix='lp_iage/Downloads/stereo_datasets/training/lp_image',
+        img_prefix='image/image_2',
+        lp_prefix='lp/lp_image',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -197,12 +197,12 @@ data = dict(
                     dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
-        data_root='/kaggle/input/lp-image'),
+        data_root='/kaggle/input/kitti_compressed'),
     test=dict(
         type='KittiDatasetLP',
         ann_file='val.txt',
-        img_prefix='image_2/Downloads/stereo_datasets/training/image_2',
-        lp_prefix='lp_iage/Downloads/stereo_datasets/training/lp_image',
+        img_prefix='image/image_2',
+        lp_prefix='lp/lp_image',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -224,7 +224,7 @@ data = dict(
                     dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
-        data_root='/kaggle/input/lp-image'))
+        data_root='/kaggle/input/kitti_compressed'))
 evaluation = dict(interval=12, metric='mAP')
 optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
