@@ -153,7 +153,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='train.txt',
         img_prefix='image/image_2',
-        lp_prefix='lp/lp_image',
+        lp_prefix='disparity/disparity',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -175,7 +175,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
-        lp_prefix='lp/lp_image',
+        lp_prefix='disparity/disparity',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -202,7 +202,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
-        lp_prefix='lp/lp_image',
+        lp_prefix='disparity/disparity',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -234,7 +234,7 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[8, 11])
-runner = dict(type='EpochBasedRunner', max_epochs=40)
+runner = dict(type='EpochBasedRunner', max_epochs=20)
 checkpoint_config = dict(interval=1)
 log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
