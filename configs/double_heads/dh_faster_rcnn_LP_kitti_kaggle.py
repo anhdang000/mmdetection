@@ -153,7 +153,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='train.txt',
         img_prefix='image/image_2',
-        lp_prefix='ltp/LTP-3',
+        lp_prefix='disparity/disparity',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -175,7 +175,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
-        lp_prefix='ltp/LTP-3',
+        lp_prefix='disparity/disparity',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -202,7 +202,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
-        lp_prefix='ltp/LTP-3',
+        lp_prefix='disparity/disparity',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
