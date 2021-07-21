@@ -11,7 +11,7 @@ model = dict(
         style='pytorch',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
-        type='FPN',
+        type='FPNParallel',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=5),
@@ -153,7 +153,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='train.txt',
         img_prefix='image/image_2',
-        lp_prefix='disparity/disparity',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -175,7 +175,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
-        lp_prefix='disparity/disparity',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -202,7 +202,7 @@ data = dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='image/image_2',
-        lp_prefix='disparity/disparity',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
