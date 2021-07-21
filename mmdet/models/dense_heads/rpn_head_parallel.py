@@ -11,7 +11,7 @@ from .anchor_head import AnchorHead
 
 
 @HEADS.register_module()
-class RPNHeadMerge(AnchorHead):
+class RPNParallel(AnchorHead):
     """RPN head.
 
     Args:
@@ -23,7 +23,7 @@ class RPNHeadMerge(AnchorHead):
                  in_channels,
                  init_cfg=dict(type='Normal', layer='Conv2d', std=0.01),
                  **kwargs):
-        super(RPNHeadMerge, self).__init__(
+        super(RPNParallel, self).__init__(
             1, in_channels, init_cfg=init_cfg, **kwargs)
 
     def _init_layers(self):
@@ -65,7 +65,7 @@ class RPNHeadMerge(AnchorHead):
         Returns:
             dict[str, Tensor]: A dictionary of loss components.
         """
-        losses = super(RPNHeadMerge, self).loss(
+        losses = super(RPNParallel, self).loss(
             cls_scores,
             bbox_preds,
             gt_bboxes,

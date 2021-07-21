@@ -662,7 +662,8 @@ class ResNetParallel(BaseModule):
 
         x1 = self.maxpool(x1)
         x2 = self.maxpool(x2)
-        outs = []
+        outs1 = []
+        outs2 = []
         for i, layer_name in enumerate(self.res_layers):
             res_layer = getattr(self, layer_name)
             x1 = res_layer(x1)
@@ -671,8 +672,9 @@ class ResNetParallel(BaseModule):
             # x1 = self.conv_after_merge[2+i](x_merge)
             x1 = torch.add(x1, x2)
             if i in self.out_indices:
-                outs.append(x1)
-        return tuple(outs)
+                outs1.append(x1)
+                outs2.append(x2)
+        return tuple(outs1), tuple(outs2)
 
     def train(self, mode=True):
         """Convert the model into training mode while keep normalization layer

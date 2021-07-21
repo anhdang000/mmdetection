@@ -148,55 +148,77 @@ class FPNParallel(BaseModule):
                 self.fpn_convs.append(extra_fpn_conv)
 
     @auto_fp16()
-    def forward(self, inputs):
+    def forward(self, inputs1, inputs2):
         """Forward function."""
-        assert len(inputs) == len(self.in_channels)
+        assert len(inputs1) == len(self.in_channels)
+        assert len(inputs2) == len(self.in_channels)
 
         # build laterals
-        laterals = [
-            lateral_conv(inputs[i + self.start_level])
+        laterals1 = [
+            lateral_conv(inputs1[i + self.start_level])
+            for i, lateral_conv in enumerate(self.lateral_convs)
+        ]
+        laterals2 = [
+            lateral_conv(inputs2[i + self.start_level])
             for i, lateral_conv in enumerate(self.lateral_convs)
         ]
 
+        # Add
+        laterals1 = [l1 + l2 for l1, l2 in zip(laterals1, laterals2)]
+
         # build top-down path
-        used_backbone_levels = len(laterals)
+        used_backbone_levels = len(laterals1)
         for i in range(used_backbone_levels - 1, 0, -1):
             # In some cases, fixing `scale factor` (e.g. 2) is preferred, but
             #  it cannot co-exist with `size` in `F.interpolate`.
             if 'scale_factor' in self.upsample_cfg:
-                laterals[i - 1] += F.interpolate(laterals[i],
+                laterals1[i - 1] += F.interpolate(laterals1[i],
+                                                 **self.upsample_cfg)
+                laterals2[i - 1] += F.interpolate(laterals2[i],
                                                  **self.upsample_cfg)
             else:
-                prev_shape = laterals[i - 1].shape[2:]
-                laterals[i - 1] += F.interpolate(
-                    laterals[i], size=prev_shape, **self.upsample_cfg)
+                prev_shape = laterals1[i - 1].shape[2:]
+                laterals1[i - 1] += F.interpolate(
+                    laterals1[i], size=prev_shape, **self.upsample_cfg)
+                laterals2[i - 1] += F.interpolate(
+                    laterals2[i], size=prev_shape, **self.upsample_cfg)
+
+        # Add
+        laterals1 = [l1 + l2 for l1, l2 in zip(laterals1, laterals2)]
 
         # build outputs
         # part 1: from original levels
-        outs = [
-            self.fpn_convs[i](laterals[i]) for i in range(used_backbone_levels)
+        outs1 = [
+            self.fpn_convs[i](laterals1[i]) for i in range(used_backbone_levels)
+        ]
+        outs2 = [
+            self.fpn_convs[i](laterals2[i]) for i in range(used_backbone_levels)
         ]
         # part 2: add extra levels
-        if self.num_outs > len(outs):
+        if self.num_outs > len(outs1):
             # use max pool to get more levels on top of outputs
             # (e.g., Faster R-CNN, Mask R-CNN)
             if not self.add_extra_convs:
                 for i in range(self.num_outs - used_backbone_levels):
-                    outs.append(F.max_pool2d(outs[-1], 1, stride=2))
+                    outs1.append(F.max_pool2d(outs1[-1], 1, stride=2))
+                    outs2.append(F.max_pool2d(outs2[-1], 1, stride=2))
             # add conv layers on top of original feature maps (RetinaNet)
             else:
                 if self.add_extra_convs == 'on_input':
-                    extra_source = inputs[self.backbone_end_level - 1]
+                    extra_source = inputs1[self.backbone_end_level - 1]
                 elif self.add_extra_convs == 'on_lateral':
-                    extra_source = laterals[-1]
+                    extra_source = laterals1[-1]
                 elif self.add_extra_convs == 'on_output':
-                    extra_source = outs[-1]
+                    extra_source = outs1[-1]
                 else:
                     raise NotImplementedError
-                outs.append(self.fpn_convs[used_backbone_levels](extra_source))
+                outs1.append(self.fpn_convs[used_backbone_levels](extra_source))
+                outs2.append(self.fpn_convs[used_backbone_levels](extra_source))
                 for i in range(used_backbone_levels + 1, self.num_outs):
                     if self.relu_before_extra_convs:
-                        outs.append(self.fpn_convs[i](F.relu(outs[-1])))
+                        outs1.append(self.fpn_convs[i](F.relu(outs1[-1])))
+                        outs2.append(self.fpn_convs[i](F.relu(outs2[-1])))
                     else:
-                        outs.append(self.fpn_convs[i](outs[-1]))
-        return tuple(outs)
+                        outs1.append(self.fpn_convs[i](outs1[-1]))
+                        outs2.append(self.fpn_convs[i](outs2[-1]))
+        return tuple(outs1)
