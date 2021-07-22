@@ -28,7 +28,6 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
             warnings.warn('DeprecationWarning: pretrained is deprecated, '
                           'please use "init_cfg" instead')
             backbone.pretrained = pretrained
-        print(backbone)
         self.backbone = build_backbone(backbone)
 
         if neck is not None:
