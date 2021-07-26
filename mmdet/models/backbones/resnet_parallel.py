@@ -491,12 +491,17 @@ class ResNetParallel(BaseModule):
 
         # Convolution layers after merge
         self.in_channels_to_merge = [64, 64, 256, 512, 1024, 2048]
-        self.conv_after_merge = [
-            nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
-            for in_channel in self.in_channels_to_merge
-            ]
-        for conv in self.conv_after_merge:
+        self.convs_after_merge_1 = nn.ModuleList()
+        for in_channel in self.in_channels_to_merge:
+            conv = nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
             nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+            self.convs_after_merge_1.append(conv)
+
+        self.convs_after_merge_2 = nn.ModuleList()
+        for in_channel in self.in_channels_to_merge:
+            conv = nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
+            nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+            self.convs_after_merge_2.append(conv)
 
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.
@@ -649,7 +654,8 @@ class ResNetParallel(BaseModule):
             x2 = self.conv1(x2)
 
             x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[0](x_merge)
+            x1 = self.convs_after_merge_1[0](x_merge)
+            x2 = self.convs_after_merge_2[0](x_merge)
             # x1 = torch.add(x1, x2)
 
             x1 = self.norm1(x1)
@@ -659,7 +665,8 @@ class ResNetParallel(BaseModule):
             x2 = self.relu(x2)
 
             x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[1](x_merge)
+            x1 = self.convs_after_merge_1[1](x_merge)
+            x2 = self.convs_after_merge_2[1](x_merge)
             # x1 = torch.add(x1, x2)
 
         x1 = self.maxpool(x1)
@@ -671,7 +678,8 @@ class ResNetParallel(BaseModule):
             x1 = res_layer(x1)
             x2 = res_layer(x2)
             x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[2+i](x_merge)
+            x1 = self.convs_after_merge_1[i+2](x_merge)
+            x2 = self.convs_after_merge_2[i+2](x_merge)
             # x1 = torch.add(x1, x2)
             if i in self.out_indices:
                 outs1.append(x1)

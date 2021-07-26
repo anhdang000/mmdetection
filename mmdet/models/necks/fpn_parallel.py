@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule
@@ -127,6 +128,19 @@ class FPNParallel(BaseModule):
             self.lateral_convs.append(l_conv)
             self.fpn_convs.append(fpn_conv)
 
+        self.num_merge_stages = 3
+        self.convs_after_merge_1 = [nn.ModuleList() for _ in range(len(self.num_merge_stages))]
+        self.convs_after_merge_2 = [nn.ModuleList() for _ in range(len(self.num_merge_stages))]
+        for s in range(len(self.num_merge_stages)):
+            for _ in range(len(self.lateral_convs)):
+                conv_1 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
+                nn.init.kaiming_uniform_(conv_1.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+                self.convs_after_merge_1[s].append(conv_1)
+
+                conv_2 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
+                nn.init.kaiming_uniform_(conv_2.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+                self.convs_after_merge_2[s].append(conv_2)
+
         # add extra conv layers (e.g., RetinaNet)
         extra_levels = num_outs - self.backbone_end_level + self.start_level
         if self.add_extra_convs and extra_levels >= 1:
@@ -154,71 +168,98 @@ class FPNParallel(BaseModule):
         assert len(inputs2) == len(self.in_channels)
 
         # build laterals
-        laterals1 = [
+        laterals_1 = [
             lateral_conv(inputs1[i + self.start_level])
             for i, lateral_conv in enumerate(self.lateral_convs)
         ]
-        laterals2 = [
+        laterals_2 = [
             lateral_conv(inputs2[i + self.start_level])
             for i, lateral_conv in enumerate(self.lateral_convs)
         ]
 
-        # Add
-        laterals1 = [l1 + l2 for l1, l2 in zip(laterals1, laterals2)]
+        # Merge [stage 1]
+        laterals_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(laterals_1, laterals_2)]
+        laterals_1 = [
+            self.convs_after_merge_1[0][i](laterals_merge[i]) 
+            for i in range(len(laterals_1))
+        ]
+        laterals_2 = [
+            self.convs_after_merge_2[0][i](laterals_merge[i]) 
+            for i in range(len(laterals_2))
+        ]
 
         # build top-down path
-        used_backbone_levels = len(laterals1)
+        used_backbone_levels = len(laterals_1)
         for i in range(used_backbone_levels - 1, 0, -1):
             # In some cases, fixing `scale factor` (e.g. 2) is preferred, but
             #  it cannot co-exist with `size` in `F.interpolate`.
             if 'scale_factor' in self.upsample_cfg:
-                laterals1[i - 1] += F.interpolate(laterals1[i],
+                laterals_1[i - 1] += F.interpolate(laterals_1[i],
                                                  **self.upsample_cfg)
-                laterals2[i - 1] += F.interpolate(laterals2[i],
+                laterals_2[i - 1] += F.interpolate(laterals_2[i],
                                                  **self.upsample_cfg)
             else:
-                prev_shape = laterals1[i - 1].shape[2:]
-                laterals1[i - 1] += F.interpolate(
-                    laterals1[i], size=prev_shape, **self.upsample_cfg)
-                laterals2[i - 1] += F.interpolate(
-                    laterals2[i], size=prev_shape, **self.upsample_cfg)
+                prev_shape = laterals_1[i - 1].shape[2:]
+                laterals_1[i - 1] += F.interpolate(
+                    laterals_1[i], size=prev_shape, **self.upsample_cfg)
+                laterals_2[i - 1] += F.interpolate(
+                    laterals_2[i], size=prev_shape, **self.upsample_cfg)
 
-        # Add
-        laterals1 = [l1 + l2 for l1, l2 in zip(laterals1, laterals2)]
+        # Merge [stage 2]
+        laterals_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(laterals_1, laterals_2)]
+        laterals_1 = [
+            self.convs_after_merge_1[1][i](laterals_merge[i]) 
+            for i in range(len(laterals_1))
+        ]
+        laterals_2 = [
+            self.convs_after_merge_2[1][i](laterals_merge[i]) 
+            for i in range(len(laterals_2))
+        ]
 
         # build outputs
         # part 1: from original levels
-        outs1 = [
-            self.fpn_convs[i](laterals1[i]) for i in range(used_backbone_levels)
+        outs_1 = [
+            self.fpn_convs[i](laterals_1[i]) for i in range(used_backbone_levels)
         ]
-        outs2 = [
-            self.fpn_convs[i](laterals2[i]) for i in range(used_backbone_levels)
+        outs_2 = [
+            self.fpn_convs[i](laterals_2[i]) for i in range(used_backbone_levels)
         ]
         # part 2: add extra levels
-        if self.num_outs > len(outs1):
+        if self.num_outs > len(outs_1):
             # use max pool to get more levels on top of outputs
             # (e.g., Faster R-CNN, Mask R-CNN)
             if not self.add_extra_convs:
                 for i in range(self.num_outs - used_backbone_levels):
-                    outs1.append(F.max_pool2d(outs1[-1], 1, stride=2))
-                    outs2.append(F.max_pool2d(outs2[-1], 1, stride=2))
+                    outs_1.append(F.max_pool2d(outs_1[-1], 1, stride=2))
+                    outs_2.append(F.max_pool2d(outs_2[-1], 1, stride=2))
             # add conv layers on top of original feature maps (RetinaNet)
             else:
                 if self.add_extra_convs == 'on_input':
                     extra_source = inputs1[self.backbone_end_level - 1]
                 elif self.add_extra_convs == 'on_lateral':
-                    extra_source = laterals1[-1]
+                    extra_source = laterals_1[-1]
                 elif self.add_extra_convs == 'on_output':
-                    extra_source = outs1[-1]
+                    extra_source = outs_1[-1]
                 else:
                     raise NotImplementedError
-                outs1.append(self.fpn_convs[used_backbone_levels](extra_source))
-                outs2.append(self.fpn_convs[used_backbone_levels](extra_source))
+                outs_1.append(self.fpn_convs[used_backbone_levels](extra_source))
+                outs_2.append(self.fpn_convs[used_backbone_levels](extra_source))
                 for i in range(used_backbone_levels + 1, self.num_outs):
                     if self.relu_before_extra_convs:
-                        outs1.append(self.fpn_convs[i](F.relu(outs1[-1])))
-                        outs2.append(self.fpn_convs[i](F.relu(outs2[-1])))
+                        outs_1.append(self.fpn_convs[i](F.relu(outs_1[-1])))
+                        outs_2.append(self.fpn_convs[i](F.relu(outs_2[-1])))
                     else:
-                        outs1.append(self.fpn_convs[i](outs1[-1]))
-                        outs2.append(self.fpn_convs[i](outs2[-1]))
-        return tuple(outs1)
+                        outs_1.append(self.fpn_convs[i](outs_1[-1]))
+                        outs_2.append(self.fpn_convs[i](outs_2[-1]))
+        
+        # Merge [stage 3]
+        outs_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(outs_1, outs_2)]
+        outs_1 = [
+            self.convs_after_merge_1[2][i](outs_merge[i]) 
+            for i in range(len(outs_1))
+        ]
+        outs_2 = [
+            self.convs_after_merge_2[2][i](outs_merge[i]) 
+            for i in range(len(outs_2))
+        ]
+        return tuple(outs_merge)
