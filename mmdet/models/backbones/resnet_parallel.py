@@ -495,6 +495,8 @@ class ResNetParallel(BaseModule):
             nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
             for in_channel in self.in_channels_to_merge
             ]
+        for conv in self.conv_after_merge:
+            nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
 
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.
@@ -646,9 +648,9 @@ class ResNetParallel(BaseModule):
             x1 = self.conv1(x1)
             x2 = self.conv1(x2)
 
-            # x_merge = torch.cat((x1, x2), dim=1)
-            # x1 = self.conv_after_merge[0](x_merge)
-            x1 = torch.add(x1, x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = self.conv_after_merge[0](x_merge)
+            # x1 = torch.add(x1, x2)
 
             x1 = self.norm1(x1)
             x2 = self.norm1(x2)
@@ -656,9 +658,9 @@ class ResNetParallel(BaseModule):
             x1 = self.relu(x1)
             x2 = self.relu(x2)
 
-            # x_merge = torch.cat((x1, x2), dim=1)
-            # x1 = self.conv_after_merge[1](x_merge)
-            x1 = torch.add(x1, x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = self.conv_after_merge[1](x_merge)
+            # x1 = torch.add(x1, x2)
 
         x1 = self.maxpool(x1)
         x2 = self.maxpool(x2)
@@ -668,9 +670,9 @@ class ResNetParallel(BaseModule):
             res_layer = getattr(self, layer_name)
             x1 = res_layer(x1)
             x2 = res_layer(x2)
-            # x_merge = torch.cat((x1, x2), dim=1)
-            # x1 = self.conv_after_merge[2+i](x_merge)
-            x1 = torch.add(x1, x2)
+            x_merge = torch.cat((x1, x2), dim=1)
+            x1 = self.conv_after_merge[2+i](x_merge)
+            # x1 = torch.add(x1, x2)
             if i in self.out_indices:
                 outs1.append(x1)
                 outs2.append(x2)
