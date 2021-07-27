@@ -112,7 +112,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFileLP'),
     dict(type='LoadAnnotationsLP', with_bbox=True),
-    dict(type='ResizeLP', img_scale=(1333, 800), keep_ratio=True),
+    dict(type='ResizeLP', img_scale=(800, 800), keep_ratio=True),
     dict(type='RandomFlipLP', flip_ratio=0.5),
     dict(
         type='NormalizeLP',
@@ -129,7 +129,7 @@ test_pipeline = [
     dict(type='LoadImageFromFileLP'),
     dict(
         type='MultiScaleFlipAugLP',
-        img_scale=(1333, 800),
+        img_scale=(800, 800),
         flip=False,
         transforms=[
             dict(type='ResizeLP', keep_ratio=True),
@@ -147,8 +147,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=3,
+    workers_per_gpu=3,
     train=dict(
         type='KittiDatasetLP2',
         ann_file='train.txt',
@@ -157,7 +157,7 @@ data = dict(
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
-            dict(type='ResizeLP', img_scale=(1333, 800), keep_ratio=True),
+            dict(type='ResizeLP', img_scale=(800, 800), keep_ratio=True),
             dict(type='RandomFlipLP', flip_ratio=0.5),
             dict(
                 type='NormalizeLP',
@@ -180,7 +180,7 @@ data = dict(
             dict(type='LoadImageFromFileLP'),
             dict(
                 type='MultiScaleFlipAugLP',
-                img_scale=(1333, 800),
+                img_scale=(800, 800),
                 flip=False,
                 transforms=[
                     dict(type='ResizeLP', keep_ratio=True),
@@ -207,7 +207,7 @@ data = dict(
             dict(type='LoadImageFromFileLP'),
             dict(
                 type='MultiScaleFlipAugLP',
-                img_scale=(1333, 800),
+                img_scale=(800, 800),
                 flip=False,
                 transforms=[
                     dict(type='ResizeLP', keep_ratio=True),
