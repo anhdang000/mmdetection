@@ -494,13 +494,13 @@ class ResNetParallel(BaseModule):
         self.convs_after_merge_1 = nn.ModuleList()
         for in_channel in self.in_channels_to_merge:
             conv = nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
-            nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+            # nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
             self.convs_after_merge_1.append(conv)
 
         self.convs_after_merge_2 = nn.ModuleList()
         for in_channel in self.in_channels_to_merge:
             conv = nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
-            nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+            # nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
             self.convs_after_merge_2.append(conv)
 
     def make_stage_plugins(self, plugins, stage_idx):

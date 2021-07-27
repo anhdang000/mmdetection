@@ -134,17 +134,17 @@ class FPNParallel(BaseModule):
         for s in range(self.num_merge_stages):
             for _ in range(len(self.lateral_convs)):
                 conv_1 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
-                nn.init.kaiming_uniform_(conv_1.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+                # nn.init.kaiming_uniform_(conv_1.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
                 self.convs_after_merge_1[s].append(conv_1)
 
                 conv_2 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
-                nn.init.kaiming_uniform_(conv_2.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+                # nn.init.kaiming_uniform_(conv_2.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
                 self.convs_after_merge_2[s].append(conv_2)
 
         self.convs_outputs = nn.ModuleList()
         for _ in range(self.num_outs):
             conv = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
-            nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+            # nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
             self.convs_outputs.append(conv)
 
         # add extra conv layers (e.g., RetinaNet)
@@ -265,7 +265,7 @@ class FPNParallel(BaseModule):
             for i in range(len(outs_merge))
         ]
         outs_2 = [
-            self.convs_outputs[2][i](outs_merge[i]) 
+            self.convs_outputs[i](outs_merge[i]) 
             for i in range(len(outs_merge))
         ]
         outs = [out_1 + out_2 for out_1, out_2 in zip(outs_1, outs_2)]
