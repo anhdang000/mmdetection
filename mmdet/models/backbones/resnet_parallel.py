@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.utils.checkpoint as cp
 from mmcv.cnn import build_conv_layer, build_norm_layer, build_plugin_layer
+from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 from torch.nn.modules.batchnorm import _BatchNorm
 
@@ -492,16 +493,28 @@ class ResNetParallel(BaseModule):
         # Convolution layers after merge
         self.in_channels_to_merge = [64, 64, 256, 512, 1024, 2048]
         self.convs_after_merge_1 = nn.ModuleList()
-        for in_channel in self.in_channels_to_merge:
-            conv = nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
-            # nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
-            self.convs_after_merge_1.append(conv)
-
         self.convs_after_merge_2 = nn.ModuleList()
+
         for in_channel in self.in_channels_to_merge:
-            conv = nn.Conv2d(2*in_channel, in_channel, kernel_size=3, padding=(1, 1)).cuda()
-            # nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
-            self.convs_after_merge_2.append(conv)
+            conv_1 = build_conv_layer(
+                self.conv_cfg,
+                2*in_channel,
+                in_channel,
+                kernel_size=5,
+                stride=1,
+                padding=1,
+                bias=False)
+            self.convs_after_merge_1.append(conv_1)
+            
+            conv_2 = build_conv_layer(
+                self.conv_cfg,
+                2*in_channel,
+                in_channel,
+                kernel_size=5,
+                stride=1,
+                padding=1,
+                bias=False)
+            self.convs_after_merge_2.append(conv_2)
 
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.
