@@ -262,4 +262,5 @@ class FPNParallel(BaseModule):
             self.convs_after_merge_2[2][i](outs_merge[i]) 
             for i in range(len(outs_2))
         ]
-        return tuple(outs_merge)
+        outs = [out_1 + out_2 for out_1, out_2 in zip(outs_1, outs_2)]
+        return tuple(outs)
