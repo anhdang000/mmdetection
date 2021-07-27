@@ -129,9 +129,9 @@ class FPNParallel(BaseModule):
             self.fpn_convs.append(fpn_conv)
 
         self.num_merge_stages = 3
-        self.convs_after_merge_1 = [nn.ModuleList() for _ in range(len(self.num_merge_stages))]
-        self.convs_after_merge_2 = [nn.ModuleList() for _ in range(len(self.num_merge_stages))]
-        for s in range(len(self.num_merge_stages)):
+        self.convs_after_merge_1 = [nn.ModuleList() for _ in range(self.num_merge_stages)]
+        self.convs_after_merge_2 = [nn.ModuleList() for _ in range(self.num_merge_stages)]
+        for s in range(self.num_merge_stages):
             for _ in range(len(self.lateral_convs)):
                 conv_1 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
                 nn.init.kaiming_uniform_(conv_1.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
@@ -181,11 +181,11 @@ class FPNParallel(BaseModule):
         laterals_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(laterals_1, laterals_2)]
         laterals_1 = [
             self.convs_after_merge_1[0][i](laterals_merge[i]) 
-            for i in range(len(laterals_1))
+            for i in range(len(laterals_merge))
         ]
         laterals_2 = [
             self.convs_after_merge_2[0][i](laterals_merge[i]) 
-            for i in range(len(laterals_2))
+            for i in range(len(laterals_merge))
         ]
 
         # build top-down path
@@ -209,11 +209,11 @@ class FPNParallel(BaseModule):
         laterals_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(laterals_1, laterals_2)]
         laterals_1 = [
             self.convs_after_merge_1[1][i](laterals_merge[i]) 
-            for i in range(len(laterals_1))
+            for i in range(len(laterals_merge))
         ]
         laterals_2 = [
             self.convs_after_merge_2[1][i](laterals_merge[i]) 
-            for i in range(len(laterals_2))
+            for i in range(len(laterals_merge))
         ]
 
         # build outputs
@@ -256,11 +256,11 @@ class FPNParallel(BaseModule):
         outs_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(outs_1, outs_2)]
         outs_1 = [
             self.convs_after_merge_1[2][i](outs_merge[i]) 
-            for i in range(len(outs_1))
+            for i in range(len(outs_merge))
         ]
         outs_2 = [
             self.convs_after_merge_2[2][i](outs_merge[i]) 
-            for i in range(len(outs_2))
+            for i in range(len(outs_merge))
         ]
         outs = [out_1 + out_2 for out_1, out_2 in zip(outs_1, outs_2)]
         return tuple(outs)
