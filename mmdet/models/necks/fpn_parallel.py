@@ -128,7 +128,7 @@ class FPNParallel(BaseModule):
             self.lateral_convs.append(l_conv)
             self.fpn_convs.append(fpn_conv)
 
-        self.num_merge_stages = 3
+        self.num_merge_stages = 2
         self.convs_after_merge_1 = [nn.ModuleList() for _ in range(self.num_merge_stages)]
         self.convs_after_merge_2 = [nn.ModuleList() for _ in range(self.num_merge_stages)]
         for s in range(self.num_merge_stages):
@@ -140,6 +140,12 @@ class FPNParallel(BaseModule):
                 conv_2 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
                 nn.init.kaiming_uniform_(conv_2.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
                 self.convs_after_merge_2[s].append(conv_2)
+
+        self.convs_outputs = nn.ModuleList()
+        for _ in range(self.num_outs):
+            conv = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
+            nn.init.kaiming_uniform_(conv.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+            self.convs_outputs.append(conv)
 
         # add extra conv layers (e.g., RetinaNet)
         extra_levels = num_outs - self.backbone_end_level + self.start_level
@@ -252,14 +258,14 @@ class FPNParallel(BaseModule):
                         outs_1.append(self.fpn_convs[i](outs_1[-1]))
                         outs_2.append(self.fpn_convs[i](outs_2[-1]))
         
-        # Merge [stage 3]
+        # Merge [outputs]
         outs_merge = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(outs_1, outs_2)]
         outs_1 = [
-            self.convs_after_merge_1[2][i](outs_merge[i]) 
+            self.convs_outputs[i](outs_merge[i]) 
             for i in range(len(outs_merge))
         ]
         outs_2 = [
-            self.convs_after_merge_2[2][i](outs_merge[i]) 
+            self.convs_outputs[2][i](outs_merge[i]) 
             for i in range(len(outs_merge))
         ]
         outs = [out_1 + out_2 for out_1, out_2 in zip(outs_1, outs_2)]
