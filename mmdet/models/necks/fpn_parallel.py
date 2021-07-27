@@ -133,39 +133,15 @@ class FPNParallel(BaseModule):
         self.convs_after_merge_2 = [nn.ModuleList() for _ in range(self.num_merge_stages)]
         for s in range(self.num_merge_stages):
             for _ in range(len(self.lateral_convs)):
-                conv_1 = ConvModule(
-                    2*out_channels,
-                    out_channels,
-                    3,
-                    padding=1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    inplace=False)
+                conv_1 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
                 self.convs_after_merge_1[s].append(conv_1)
 
-                conv_2 = ConvModule(
-                    2*out_channels,
-                    out_channels,
-                    3,
-                    padding=1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    inplace=False)
+                conv_2 = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
                 self.convs_after_merge_2[s].append(conv_2)
 
         self.convs_outputs = nn.ModuleList()
         for _ in range(self.num_outs):
-            conv = ConvModule(
-                    2*out_channels,
-                    out_channels,
-                    3,
-                    padding=1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    inplace=False)
+            conv = nn.Conv2d(2*self.out_channels, self.out_channels, kernel_size=3, padding=(1, 1)).cuda()
             self.convs_outputs.append(conv)
 
         # add extra conv layers (e.g., RetinaNet)
