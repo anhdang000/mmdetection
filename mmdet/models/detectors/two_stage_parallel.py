@@ -63,9 +63,9 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
 
     def extract_feat(self, img, lp):
         """Directly extract features from the backbone+neck."""
-        x1, x2 = self.backbone(img, lp)
+        x = self.backbone(img, lp)
         if self.with_neck:
-            x = self.neck(x1, x2)
+            x = self.neck(x)
         return x
 
     def forward_dummy(self, img, lp):
