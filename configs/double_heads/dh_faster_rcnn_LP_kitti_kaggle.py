@@ -112,7 +112,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFileLP'),
     dict(type='LoadAnnotationsLP', with_bbox=True),
-    dict(type='ResizeLP', img_scale=(600, 600), keep_ratio=True),
+    dict(type='ResizeLP', img_scale=(800, 800), keep_ratio=True),
     dict(type='RandomFlipLP', flip_ratio=0.5),
     dict(
         type='NormalizeLP',
@@ -129,7 +129,7 @@ test_pipeline = [
     dict(type='LoadImageFromFileLP'),
     dict(
         type='MultiScaleFlipAugLP',
-        img_scale=(600, 600),
+        img_scale=(800, 800),
         flip=False,
         transforms=[
             dict(type='ResizeLP', keep_ratio=True),
@@ -157,7 +157,7 @@ data = dict(
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
-            dict(type='ResizeLP', img_scale=(600, 600), keep_ratio=True),
+            dict(type='ResizeLP', img_scale=(800, 800), keep_ratio=True),
             dict(type='RandomFlipLP', flip_ratio=0.5),
             dict(
                 type='NormalizeLP',
@@ -180,7 +180,7 @@ data = dict(
             dict(type='LoadImageFromFileLP'),
             dict(
                 type='MultiScaleFlipAugLP',
-                img_scale=(600, 600),
+                img_scale=(800, 800),
                 flip=False,
                 transforms=[
                     dict(type='ResizeLP', keep_ratio=True),
@@ -207,7 +207,7 @@ data = dict(
             dict(type='LoadImageFromFileLP'),
             dict(
                 type='MultiScaleFlipAugLP',
-                img_scale=(600, 600),
+                img_scale=(800, 800),
                 flip=False,
                 transforms=[
                     dict(type='ResizeLP', keep_ratio=True),
