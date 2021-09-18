@@ -89,7 +89,7 @@ class KittiDatasetJPG(CustomDataset):
             data_info = dict(filename=f'{image_id}.jpg', width=width, height=height)
     
             # load annotations
-            label_prefix = self.img_prefix.replace('image_2', 'label_2')
+            label_prefix = '/kaggle/input/kitti-compressed/label/label_2'
             lines = mmcv.list_from_file(osp.join(label_prefix, f'{image_id}.txt'))
     
             content = [line.strip().split(' ') for line in lines]
