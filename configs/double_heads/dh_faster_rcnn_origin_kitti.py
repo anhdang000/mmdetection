@@ -105,8 +105,8 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDatasetJPG'
-data_root = '/kaggle/input/kitti-compressed'
+dataset_type = 'KittiDataset'
+data_root = '../stereo_datasets'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -143,12 +143,12 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=4,
-    workers_per_gpu=4,
+    samples_per_gpu=3,
+    workers_per_gpu=3,
     train=dict(
-        type='KittiDatasetJPG',
+        type='KittiDataset',
         ann_file='train.txt',
-        img_prefix='image/image_2',
+        img_prefix='training/image_2',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True),
@@ -163,11 +163,11 @@ data = dict(
             dict(type='DefaultFormatBundle'),
             dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
         ],
-        data_root='/kaggle/input/kitti-compressed'),
+        data_root='../stereo_datasets'),
     val=dict(
-        type='KittiDatasetJPG',
+        type='KittiDataset',
         ann_file='val.txt',
-        img_prefix='image/image_2',
+        img_prefix='training/image_2',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -187,11 +187,11 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        data_root='/kaggle/input/kitti-compressed'),
+        data_root='../stereo_datasets'),
     test=dict(
-        type='KittiDatasetJPG',
-        ann_file='val.txt',
-        img_prefix='image/image_2',
+        type='KittiDataset',
+        ann_file='train.txt',
+        img_prefix='training/image_2',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -211,7 +211,7 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        data_root='/kaggle/input/kitti-compressed'))
+        data_root='../stereo_datasets'))
 evaluation = dict(interval=12, metric='mAP')
 optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
@@ -221,7 +221,7 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[8, 11])
-runner = dict(type='EpochBasedRunner', max_epochs=20)
+runner = dict(type='EpochBasedRunner', max_epochs=12)
 checkpoint_config = dict(interval=12)
 log_config = dict(interval=10, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
