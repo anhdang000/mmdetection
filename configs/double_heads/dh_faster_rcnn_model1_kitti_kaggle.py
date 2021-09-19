@@ -240,7 +240,8 @@ log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = 'dh_faster_rcnn_r50_fpn_1x_coco_20200130-586b67df.pth'
+# load_from = 'dh_faster_rcnn_r50_fpn_1x_coco_20200130-586b67df.pth'
+load_from = None
 resume_from = None
 workflow = [('train', 1)]
 work_dir = './tutorial_exps'
