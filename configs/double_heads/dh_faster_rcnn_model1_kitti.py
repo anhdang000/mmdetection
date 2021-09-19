@@ -1,5 +1,5 @@
 model = dict(
-    type='FasterRCNNParallel',
+    type='FasterRCNNParallel1',
     pretrained=None,
     backbone=dict(
         type='ResNetParallel1',
