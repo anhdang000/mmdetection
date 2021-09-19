@@ -12,9 +12,10 @@ from .resnext import ResNeXt
 from .ssd_vgg import SSDVGG
 from .trident_resnet import TridentResNet
 from .resnet_parallel import ResNetParallel
+from .resnet_parallel_1 import ResNetParallel1
 
 __all__ = [
     'RegNet', 'ResNet', 'ResNetV1d', 'ResNeXt', 'SSDVGG', 'HRNet',
     'MobileNetV2', 'Res2Net', 'HourglassNet', 'DetectoRS_ResNet',
-    'DetectoRS_ResNeXt', 'Darknet', 'ResNeSt', 'TridentResNet', 'ResNetParallel'
+    'DetectoRS_ResNeXt', 'Darknet', 'ResNeSt', 'TridentResNet', 'ResNetParallel', 'ResNetParallel1'
 ]
