@@ -669,7 +669,7 @@ class ResNetParallel1(BaseModule):
     def train(self, mode=True):
         """Convert the model into training mode while keep normalization layer
         freezed."""
-        super(ResNetParallel, self).train(mode)
+        super(ResNetParallel1, self).train(mode)
         self._freeze_stages()
         if mode and self.norm_eval:
             for m in self.modules():
