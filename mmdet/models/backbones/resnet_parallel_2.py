@@ -654,7 +654,7 @@ class ResNetParallel2(BaseModule):
             x1 = self.relu(x1)
             x2 = self.relu(x2)
             x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[0](x_merge)
+            x1 = self.conv_after_merge[1](x_merge)
 
         x1 = self.maxpool(x1)
         x2 = self.maxpool(x2)
@@ -664,7 +664,7 @@ class ResNetParallel2(BaseModule):
             x1 = res_layer(x1)
             x2 = res_layer(x2)
             x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[0](x_merge)
+            x1 = self.conv_after_merge[2+i](x_merge)
             if i in self.out_indices:
                 outs.append(x1)
         return tuple(outs)

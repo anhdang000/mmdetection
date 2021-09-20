@@ -1,6 +1,5 @@
 model = dict(
     type='FasterRCNN',
-    pretrained=None,
     backbone=dict(
         type='ResNet',
         depth=50,
@@ -9,7 +8,8 @@ model = dict(
         frozen_stages=1,
         norm_cfg=dict(type='BN', requires_grad=True),
         norm_eval=True,
-        style='pytorch'),
+        style='pytorch',
+        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -227,8 +227,7 @@ log_config = dict(interval=10, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-# load_from = 'dh_faster_rcnn_r50_fpn_1x_coco_20200130-586b67df.pth'
-load_from = None
+load_from = 'dh_faster_rcnn_r50_fpn_1x_coco_20200130-586b67df.pth'
 resume_from = None
 workflow = [('train', 1)]
 work_dir = './tutorial_exps'
