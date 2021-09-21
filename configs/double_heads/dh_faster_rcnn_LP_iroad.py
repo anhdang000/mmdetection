@@ -105,8 +105,8 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDatasetLP'
-data_root = '../stereo_datasets'
+dataset_type = 'IroadDatasetLP'
+data_root = '../stereo_datasets/IROAD_kitti'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -150,10 +150,10 @@ data = dict(
     samples_per_gpu=3,
     workers_per_gpu=3,
     train=dict(
-        type='KittiDatasetLP',
+        type='IroadDatasetLP',
         ann_file='train.txt',
-        img_prefix='training/image_2',
-        lp_prefix='training/lp_image',
+        img_prefix='image',
+        lp_prefix='LTP',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -170,12 +170,12 @@ data = dict(
             dict(type='DefaultFormatBundleLP'),
             dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
         ],
-        data_root='../stereo_datasets'),
+        data_root='../stereo_datasets/IROAD_kitti'),
     val=dict(
-        type='KittiDatasetLP',
+        type='IroadDatasetLP',
         ann_file='val.txt',
-        img_prefix='training/image_2',
-        lp_prefix='training/lp_image',
+        img_prefix='image',
+        lp_prefix='LTP',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -199,10 +199,10 @@ data = dict(
         ],
         data_root='../stereo_datasets'),
     test=dict(
-        type='KittiDatasetLP',
+        type='IroadDatasetLP',
         ann_file='val.txt',
-        img_prefix='training/image_2',
-        lp_prefix='training/lp_image',
+        img_prefix='image',
+        lp_prefix='LTP',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -224,7 +224,7 @@ data = dict(
                     dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
-        data_root='../stereo_datasets'))
+        data_root='../stereo_datasets/IROAD_kitti'))
 evaluation = dict(interval=12, metric='mAP')
 optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
@@ -234,7 +234,7 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[8, 11])
-runner = dict(type='EpochBasedRunner', max_epochs=40)
+runner = dict(type='EpochBasedRunner', max_epochs=20)
 checkpoint_config = dict(interval=1)
 log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
