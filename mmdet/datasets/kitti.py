@@ -8,6 +8,8 @@ from tqdm import tqdm
 from mmdet.datasets.builder import DATASETS
 from mmdet.datasets.custom import CustomDataset
 
+import pickle
+
 
 @DATASETS.register_module()
 class KittiDataset(CustomDataset):
@@ -21,6 +23,13 @@ class KittiDataset(CustomDataset):
         cat2label = {k: i for i, k in enumerate(self.CLASSES)}
         # load image list from file
         image_list = mmcv.list_from_file(self.ann_file)
+
+        pkl_filename = 'kitti_dataset_infos.pkl'
+        if osp.exists(pkl_filename):
+            with open(pkl_filename, 'rb') as f:
+                data_infos = pickle.load(f)
+                return data_infos
+
         data_infos = []
         # convert annotations to middle format
 
@@ -63,6 +72,8 @@ class KittiDataset(CustomDataset):
             data_info.update(ann=data_anno)
             data_infos.append(data_info)
         
+        with open(pkl_filename, 'wb') as f:
+            pickle.dump(data_infos, f)
         return data_infos
 
 
@@ -78,6 +89,13 @@ class KittiDatasetJPG(CustomDataset):
         cat2label = {k: i for i, k in enumerate(self.CLASSES)}
         # load image list from file
         image_list = mmcv.list_from_file(self.ann_file)
+
+        pkl_filename = 'kitti_dataset_JPG_infos.pkl'
+        if osp.exists(pkl_filename):
+            with open(pkl_filename, 'rb') as f:
+                data_infos = pickle.load(f)
+                return data_infos
+
         data_infos = []
         # convert annotations to middle format
 
@@ -120,6 +138,9 @@ class KittiDatasetJPG(CustomDataset):
             data_info.update(ann=data_anno)
             data_infos.append(data_info)
         
+        with open(pkl_filename, 'wb') as f:
+            pickle.dump(data_infos, f)
+
         return data_infos
 
 @DATASETS.register_module()
@@ -133,6 +154,13 @@ class KittiDatasetLP(CustomDataset):
         cat2label = {k: i for i, k in enumerate(self.CLASSES)}
         # load image list from file
         image_list = mmcv.list_from_file(self.ann_file)
+
+        pkl_filename = 'kitti_dataset_LP_infos.pkl'
+        if osp.exists(pkl_filename):
+            with open(pkl_filename, 'rb') as f:
+                data_infos = pickle.load(f)
+                return data_infos
+
         data_infos = []
         # convert annotations to middle format
 
@@ -175,6 +203,9 @@ class KittiDatasetLP(CustomDataset):
             data_info.update(ann=data_anno)
             data_infos.append(data_info)
             
+        with open(pkl_filename, 'wb') as f:
+            pickle.dump(data_infos, f)
+
         return data_infos
 
 
@@ -189,6 +220,13 @@ class KittiDatasetLP2(CustomDataset):
         cat2label = {k: i for i, k in enumerate(self.CLASSES)}
         # load image list from file
         image_list = mmcv.list_from_file(self.ann_file)
+
+        pkl_filename = 'kitti_dataset_LP2_infos.pkl'
+        if osp.exists(pkl_filename):
+            with open(pkl_filename, 'rb') as f:
+                data_infos = pickle.load(f)
+                return data_infos
+
         data_infos = []
         # convert annotations to middle format
 
@@ -230,5 +268,8 @@ class KittiDatasetLP2(CustomDataset):
 
             data_info.update(ann=data_anno)
             data_infos.append(data_info)
+            
+        with open(pkl_filename, 'wb') as f:
+            pickle.dump(data_infos, f)
             
         return data_infos
