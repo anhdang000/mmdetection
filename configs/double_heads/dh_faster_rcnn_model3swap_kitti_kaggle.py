@@ -1,7 +1,7 @@
 model = dict(
-    type='FasterRCNNParallel',
+    type='FasterRCNNParallel3',
     backbone=dict(
-        type='ResNetParallel',
+        type='ResNetParallel3',
         depth=50,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
@@ -11,7 +11,7 @@ model = dict(
         style='pytorch',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
-        type='FPNParallel',
+        type='FPNParallel3',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=5),

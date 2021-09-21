@@ -1,5 +1,3 @@
-'''Concatenate two backbones'''
-
 import warnings
 
 import torch
@@ -305,8 +303,8 @@ class Bottleneck(BaseModule):
 
 
 @BACKBONES.register_module()
-class ResNetParallel2(BaseModule):
-    """ResNetParallel2 backbone.
+class ResNetParallel3(BaseModule):
+    """ResNetParallel3 backbone.
 
     Args:
         depth (int): Depth of resnet, from {18, 34, 50, 101, 152}.
@@ -391,7 +389,7 @@ class ResNetParallel2(BaseModule):
                  zero_init_residual=True,
                  pretrained=None,
                  init_cfg=None):
-        super(ResNetParallel2, self).__init__(init_cfg)
+        super(ResNetParallel3, self).__init__(init_cfg)
         self.zero_init_residual = zero_init_residual
         if depth not in self.arch_settings:
             raise KeyError(f'invalid depth {depth} for resnet')
@@ -647,34 +645,35 @@ class ResNetParallel2(BaseModule):
         else:
             x1 = self.conv1(x1)
             x2 = self.conv1(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[0](x_merge)
+
+            x1 = torch.add(x1, x2)
 
             x1 = self.norm1(x1)
             x2 = self.norm1(x2)
 
             x1 = self.relu(x1)
             x2 = self.relu(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[1](x_merge)
+
+            x1 = torch.add(x1, x2)
 
         x1 = self.maxpool(x1)
         x2 = self.maxpool(x2)
-        outs = []
+        outs1 = []
+        outs2 = []
         for i, layer_name in enumerate(self.res_layers):
             res_layer = getattr(self, layer_name)
             x1 = res_layer(x1)
             x2 = res_layer(x2)
-            x_merge = torch.cat((x1, x2), dim=1)
-            x1 = self.conv_after_merge[2+i](x_merge)
+            x1 = torch.add(x1, x2)
             if i in self.out_indices:
-                outs.append(x1)
-        return tuple(outs)
+                outs1.append(x1)
+                outs2.append(x2)
+        return tuple(outs1), tuple(outs2)
 
     def train(self, mode=True):
         """Convert the model into training mode while keep normalization layer
         freezed."""
-        super(ResNetParallel2, self).train(mode)
+        super(ResNetParallel3, self).train(mode)
         self._freeze_stages()
         if mode and self.norm_eval:
             for m in self.modules():
