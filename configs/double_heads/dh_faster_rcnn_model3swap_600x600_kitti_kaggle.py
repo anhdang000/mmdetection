@@ -112,7 +112,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFileLP'),
     dict(type='LoadAnnotationsLP', with_bbox=True),
-    dict(type='ResizeLP', img_scale=(1333, 800), keep_ratio=True),
+    dict(type='ResizeLP', img_scale=(600, 600), keep_ratio=True),
     dict(type='RandomFlipLP', flip_ratio=0.5),
     dict(
         type='NormalizeLP',
@@ -129,7 +129,7 @@ test_pipeline = [
     dict(type='LoadImageFromFileLP'),
     dict(
         type='MultiScaleFlipAugLP',
-        img_scale=(1333, 800),
+        img_scale=(600, 600),
         flip=False,
         transforms=[
             dict(type='ResizeLP', keep_ratio=True),
@@ -152,12 +152,12 @@ data = dict(
     train=dict(
         type='KittiDatasetLP2',
         ann_file='train.txt',
-        img_prefix='image/image_2',
-        lp_prefix='ltp/LTP-3',
+        img_prefix='ltp/LTP-3',
+        lp_prefix='image/image_2',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
-            dict(type='ResizeLP', img_scale=(1333, 800), keep_ratio=True),
+            dict(type='ResizeLP', img_scale=(600, 600), keep_ratio=True),
             dict(type='RandomFlipLP', flip_ratio=0.5),
             dict(
                 type='NormalizeLP',
@@ -174,13 +174,13 @@ data = dict(
     val=dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
-        img_prefix='image/image_2',
-        lp_prefix='ltp/LTP-3',
+        img_prefix='ltp/LTP-3',
+        lp_prefix='image/image_2',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
                 type='MultiScaleFlipAugLP',
-                img_scale=(1333, 800),
+                img_scale=(600, 600),
                 flip=False,
                 transforms=[
                     dict(type='ResizeLP', keep_ratio=True),
@@ -201,13 +201,13 @@ data = dict(
     test=dict(
         type='KittiDatasetLP2',
         ann_file='val.txt',
-        img_prefix='image/image_2',
-        lp_prefix='ltp/LTP-3',
+        img_prefix='ltp/LTP-3',
+        lp_prefix='image/image_2',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
                 type='MultiScaleFlipAugLP',
-                img_scale=(1333, 800),
+                img_scale=(600, 600),
                 flip=False,
                 transforms=[
                     dict(type='ResizeLP', keep_ratio=True),
