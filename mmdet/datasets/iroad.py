@@ -122,7 +122,7 @@ class IroadDatasetLP(CustomDataset):
 
 
 @DATASETS.register_module()
-class IroadDatasetLP2(CustomDataset):
+class IroadDatasetSwapLP(CustomDataset):
     CLASSES = (
         'Car', 'Van', 'Truck', 'Pedestrian', 'Person_sitting', 
         'Cyclist', 'Tram', 'Misc', 'DontCare'
@@ -143,7 +143,7 @@ class IroadDatasetLP2(CustomDataset):
             data_info = dict(filename=f'{image_id}.jpeg', width=width, height=height)
     
             # load annotations
-            label_prefix = self.img_prefix.replace('image', 'label')
+            label_prefix = self.img_prefix.replace('LTP', 'label')
             lines = mmcv.list_from_file(osp.join(label_prefix, f'{image_id}.txt'))
     
             content = [line.strip().split(' ') for line in lines]

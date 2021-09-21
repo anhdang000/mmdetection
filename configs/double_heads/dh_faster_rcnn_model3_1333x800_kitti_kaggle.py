@@ -105,8 +105,8 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'IroadDatasetLP'
-data_root = '../stereo_datasets/IROAD_kitti'
+dataset_type = 'KittiDatasetLP2'
+data_root = '/kaggle/input/kitti-compressed'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -147,13 +147,13 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=4,
-    workers_per_gpu=4,
+    samples_per_gpu=5,
+    workers_per_gpu=5,
     train=dict(
-        type='IroadDatasetLP',
+        type='KittiDatasetLP2',
         ann_file='train.txt',
-        img_prefix='LTP',
-        lp_prefix='image',
+        img_prefix='image/image_2',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -170,12 +170,12 @@ data = dict(
             dict(type='DefaultFormatBundleLP'),
             dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
         ],
-        data_root='../stereo_datasets/IROAD_kitti'),
+        data_root='/kaggle/input/kitti-compressed'),
     val=dict(
-        type='IroadDatasetLP',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
-        img_prefix='LTP',
-        lp_prefix='image',
+        img_prefix='image/image_2',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -197,12 +197,12 @@ data = dict(
                     dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
-        data_root='../stereo_datasets/IROAD_kitti'),
+        data_root='/kaggle/input/kitti-compressed'),
     test=dict(
-        type='IroadDatasetLP',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
-        img_prefix='LTP',
-        lp_prefix='image',
+        img_prefix='image/image_2',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -224,7 +224,7 @@ data = dict(
                     dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
-        data_root='../stereo_datasets/IROAD_kitti'))
+        data_root='/kaggle/input/kitti-compressed'))
 evaluation = dict(interval=12, metric='mAP')
 optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
