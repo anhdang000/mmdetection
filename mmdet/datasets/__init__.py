@@ -13,6 +13,7 @@ from .voc import VOCDataset
 from .wider_face import WIDERFaceDataset
 from .xml_style import XMLDataset
 from .kitti import KittiDataset, KittiDatasetJPG, KittiDatasetLP, KittiDatasetLP2
+from .iroad import IroadDataset, IroadDatasetLP, IroadDatasetLP2
 
 __all__ = [
     'CustomDataset', 'XMLDataset', 'CocoDataset', 'DeepFashionDataset',
@@ -21,5 +22,6 @@ __all__ = [
     'DistributedSampler', 'build_dataloader', 'ConcatDataset', 'RepeatDataset',
     'ClassBalancedDataset', 'WIDERFaceDataset', 'DATASETS', 'PIPELINES',
     'build_dataset', 'replace_ImageToTensor', 'get_loading_pipeline',
-    'NumClassCheckHook', 'KittiDataset', 'KittiDatasetJPG', 'KittiDatasetLP', 'KittiDatasetLP2'
+    'NumClassCheckHook', 'KittiDataset', 'KittiDatasetJPG', 'KittiDatasetLP', 'KittiDatasetLP2',
+    'IroadDataset', 'IroadDatasetLP', 'IroadDatasetLP2'
 ]
