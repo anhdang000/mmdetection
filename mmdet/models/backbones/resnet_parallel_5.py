@@ -303,8 +303,8 @@ class Bottleneck(BaseModule):
 
 
 @BACKBONES.register_module()
-class ResNetParallel(BaseModule):
-    """ResNetParallel backbone.
+class ResNetParallel5(BaseModule):
+    """ResNetParallel5 backbone.
 
     Args:
         depth (int): Depth of resnet, from {18, 34, 50, 101, 152}.
@@ -389,7 +389,7 @@ class ResNetParallel(BaseModule):
                  zero_init_residual=True,
                  pretrained=None,
                  init_cfg=None):
-        super(ResNetParallel, self).__init__(init_cfg)
+        super(ResNetParallel5, self).__init__(init_cfg)
         self.zero_init_residual = zero_init_residual
         if depth not in self.arch_settings:
             raise KeyError(f'invalid depth {depth} for resnet')
@@ -685,7 +685,7 @@ class ResNetParallel(BaseModule):
     def train(self, mode=True):
         """Convert the model into training mode while keep normalization layer
         freezed."""
-        super(ResNetParallel, self).train(mode)
+        super(ResNetParallel5, self).train(mode)
         self._freeze_stages()
         if mode and self.norm_eval:
             for m in self.modules():

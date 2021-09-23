@@ -7,7 +7,7 @@ from .base_parallel import BaseDetectorParallel
 
 
 @DETECTORS.register_module()
-class TwoStageDetectorParallel(BaseDetectorParallel):
+class TwoStageDetectorParallel5(BaseDetectorParallel):
     """Base class for two-stage detectors.
 
     Two-stage detectors typically consisting of a region proposal network and a
@@ -23,7 +23,7 @@ class TwoStageDetectorParallel(BaseDetectorParallel):
                  test_cfg=None,
                  pretrained=None,
                  init_cfg=None):
-        super(TwoStageDetectorParallel, self).__init__(init_cfg)
+        super(TwoStageDetectorParallel5, self).__init__(init_cfg)
         if pretrained:
             warnings.warn('DeprecationWarning: pretrained is deprecated, '
                           'please use "init_cfg" instead')
