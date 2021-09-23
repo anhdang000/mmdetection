@@ -19,6 +19,6 @@ from .resnet_parallel_5 import ResNetParallel5
 __all__ = [
     'RegNet', 'ResNet', 'ResNetV1d', 'ResNeXt', 'SSDVGG', 'HRNet',
     'MobileNetV2', 'Res2Net', 'HourglassNet', 'DetectoRS_ResNet',
-    'DetectoRS_ResNeXt', 'Darknet', 'ResNeSt', 'TridentResNet', 'ResNetParallel', 
+    'DetectoRS_ResNeXt', 'Darknet', 'ResNeSt', 'TridentResNet', 
     'ResNetParallel1', 'ResNetParallel2', 'ResNetParallel3', 'ResNetParallel5'
 ]
