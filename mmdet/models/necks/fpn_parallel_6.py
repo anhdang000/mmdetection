@@ -230,9 +230,10 @@ class FPNParallel6(BaseModule):
 
         # Gated fusion
         outs_cat = [torch.cat((l1, l2), dim=1) for l1, l2 in zip(outs_1, outs_2)]
-        G = [
+        gates = [
             self.convs_outputs[i](outs_cat[i]) 
             for i in range(len(outs_cat))
         ]
-        outs = [g * l1 + (1-g) * l2 for g, l1, l2 in zip(G, outs_1, outs_2)]
+        gates = [nn.Sigmoid()(g) for g in gates]
+        outs = [g * l1 + (1-g) * l2 for g, l1, l2 in zip(gates, outs_1, outs_2)]
         return tuple(outs)
