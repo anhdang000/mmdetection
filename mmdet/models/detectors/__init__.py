@@ -37,10 +37,12 @@ from .faster_rcnn_parallel_1 import FasterRCNNParallel1
 from .faster_rcnn_parallel_2 import FasterRCNNParallel2
 from .faster_rcnn_parallel_3 import FasterRCNNParallel3
 from .faster_rcnn_parallel_5 import FasterRCNNParallel5
+from .faster_rcnn_parallel_6 import FasterRCNNParallel6
 from .two_stage_parallel_1 import TwoStageDetectorParallel1
 from .two_stage_parallel_2 import TwoStageDetectorParallel2
 from .two_stage_parallel_3 import TwoStageDetectorParallel3
 from .two_stage_parallel_5 import TwoStageDetectorParallel5
+from .two_stage_parallel_6 import TwoStageDetectorParallel6
 
 __all__ = [
     'ATSS', 'BaseDetector', 'SingleStageDetector', 'TwoStageDetector', 'RPN',
@@ -51,6 +53,6 @@ __all__ = [
     'VFNet', 'DETR', 'TridentFasterRCNN', 'SparseRCNN', 'SCNet',
     'DeformableDETR', 'AutoAssign', 'YOLOF', 'CenterNet', 'BaseDetectorParallel', 
     'FasterRCNNParallel1', 'FasterRCNNParallel2', 'FasterRCNNParallel3', 'FasterRCNNParallel5', 
-    'TwoStageDetectorParallel1', 'TwoStageDetectorParallel2', 'TwoStageDetectorParallel3',
-    'TwoStageDetectorParallel5'
+    'FasterRCNNParallel6', 'TwoStageDetectorParallel1', 'TwoStageDetectorParallel2', 'TwoStageDetectorParallel3',
+    'TwoStageDetectorParallel5', 'TwoStageDetectorParallel6'
 ]
