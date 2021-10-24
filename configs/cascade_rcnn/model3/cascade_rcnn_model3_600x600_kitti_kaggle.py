@@ -1,7 +1,7 @@
 model = dict(
-    type='CascadeRCNN',
+    type='CascadeRCNNParallel3',
     backbone=dict(
-        type='ResNet',
+        type='ResNetParallel3',
         depth=50,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
@@ -11,7 +11,7 @@ model = dict(
         style='pytorch',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
-        type='FPN',
+        type='FPNParallel3',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=5),
@@ -47,7 +47,7 @@ model = dict(
                 in_channels=256,
                 fc_out_channels=1024,
                 roi_feat_size=7,
-                num_classes=80,
+                num_classes=9,
                 bbox_coder=dict(
                     type='DeltaXYWHBBoxCoder',
                     target_means=[0.0, 0.0, 0.0, 0.0],
@@ -64,7 +64,7 @@ model = dict(
                 in_channels=256,
                 fc_out_channels=1024,
                 roi_feat_size=7,
-                num_classes=80,
+                num_classes=9,
                 bbox_coder=dict(
                     type='DeltaXYWHBBoxCoder',
                     target_means=[0.0, 0.0, 0.0, 0.0],
@@ -81,7 +81,7 @@ model = dict(
                 in_channels=256,
                 fc_out_channels=1024,
                 roi_feat_size=7,
-                num_classes=80,
+                num_classes=9,
                 bbox_coder=dict(
                     type='DeltaXYWHBBoxCoder',
                     target_means=[0.0, 0.0, 0.0, 0.0],
@@ -176,113 +176,126 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDataset'
-data_root = '../stereo_datasets'
+dataset_type = 'KittiDatasetLP2'
+data_root = '/kaggle/input/kitti-compressed'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
-    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(type='LoadImageFromFileLP'),
+    dict(type='LoadAnnotationsLP', with_bbox=True),
+    dict(type='ResizeLP', img_scale=(600, 600), keep_ratio=False),
+    dict(type='RandomFlipLP', flip_ratio=0.5),
     dict(
-        type='Normalize',
+        type='NormalizeLP',
         mean=[123.675, 116.28, 103.53],
         std=[58.395, 57.12, 57.375],
+        mean_lp=[60, 60, 60],
+        std_lp=[60, 50, 50],
         to_rgb=True),
-    dict(type='Pad', size_divisor=32),
-    dict(type='DefaultFormatBundle'),
-    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+    dict(type='PadLP', size_divisor=32),
+    dict(type='DefaultFormatBundleLP'),
+    dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFileLP'),
     dict(
-        type='MultiScaleFlipAug',
+        type='MultiScaleFlipAugLP',
         img_scale=(600, 600),
         flip=False,
         transforms=[
-            dict(type='Resize', keep_ratio=True),
-            dict(type='RandomFlip'),
+            dict(type='ResizeLP', keep_ratio=False),
+            dict(type='RandomFlipLP'),
             dict(
-                type='Normalize',
+                type='NormalizeLP',
                 mean=[123.675, 116.28, 103.53],
                 std=[58.395, 57.12, 57.375],
+                mean_lp=[60, 60, 60],
+                std_lp=[60, 50, 50],
                 to_rgb=True),
-            dict(type='Pad', size_divisor=32),
-            dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect', keys=['img'])
+            dict(type='PadLP', size_divisor=32),
+            dict(type='ImageToTensorLP', keys=['img', 'lp']),
+            dict(type='CollectLP', keys=['img', 'lp'])
         ])
 ]
 data = dict(
-    samples_per_gpu=5,
-    workers_per_gpu=5,
+    samples_per_gpu=15,
+    workers_per_gpu=15,
     train=dict(
-        type='KittiDataset',
+        type='KittiDatasetLP2',
         ann_file='train.txt',
-        img_prefix='training/image_2',
+        img_prefix='image/image_2',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
-            dict(type='LoadImageFromFile'),
-            dict(type='LoadAnnotations', with_bbox=True),
-            dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
-            dict(type='RandomFlip', flip_ratio=0.5),
+            dict(type='LoadImageFromFileLP'),
+            dict(type='LoadAnnotationsLP', with_bbox=True),
+            dict(type='ResizeLP', img_scale=(600, 600), keep_ratio=False),
+            dict(type='RandomFlipLP', flip_ratio=0.5),
             dict(
-                type='Normalize',
+                type='NormalizeLP',
                 mean=[123.675, 116.28, 103.53],
                 std=[58.395, 57.12, 57.375],
+                mean_lp=[60, 60, 60],
+                std_lp=[60, 50, 50],
                 to_rgb=True),
-            dict(type='Pad', size_divisor=32),
-            dict(type='DefaultFormatBundle'),
-            dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+            dict(type='PadLP', size_divisor=32),
+            dict(type='DefaultFormatBundleLP'),
+            dict(type='CollectLP', keys=['img', 'lp', 'gt_bboxes', 'gt_labels'])
         ],
-        data_root='../stereo_datasets'),
+        data_root='/kaggle/input/kitti-compressed'),
     val=dict(
-        type='KittiDataset',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
-        img_prefix='training/image_2',
+        img_prefix='image/image_2',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
-            dict(type='LoadImageFromFile'),
+            dict(type='LoadImageFromFileLP'),
             dict(
-                type='MultiScaleFlipAug',
+                type='MultiScaleFlipAugLP',
                 img_scale=(600, 600),
                 flip=False,
                 transforms=[
-                    dict(type='Resize', keep_ratio=True),
-                    dict(type='RandomFlip'),
+                    dict(type='ResizeLP', keep_ratio=False),
+                    dict(type='RandomFlipLP'),
                     dict(
-                        type='Normalize',
+                        type='NormalizeLP',
                         mean=[123.675, 116.28, 103.53],
                         std=[58.395, 57.12, 57.375],
+                        mean_lp=[60, 60, 60],
+                        std_lp=[60, 50, 50],
                         to_rgb=True),
-                    dict(type='Pad', size_divisor=32),
-                    dict(type='ImageToTensor', keys=['img']),
-                    dict(type='Collect', keys=['img'])
+                    dict(type='PadLP', size_divisor=32),
+                    dict(type='ImageToTensorLP', keys=['img', 'lp']),
+                    dict(type='CollectLP', keys=['img', 'lp'])
                 ])
         ],
-        data_root='../stereo_datasets'),
+        data_root='/kaggle/input/kitti-compressed'),
     test=dict(
-        type='KittiDataset',
+        type='KittiDatasetLP2',
         ann_file='train.txt',
-        img_prefix='training/image_2',
+        img_prefix='image/image_2',
+        lp_prefix='ltp/LTP-3',
         pipeline=[
-            dict(type='LoadImageFromFile'),
+            dict(type='LoadImageFromFileLP'),
             dict(
-                type='MultiScaleFlipAug',
+                type='MultiScaleFlipAugLP',
                 img_scale=(600, 600),
                 flip=False,
                 transforms=[
-                    dict(type='Resize', keep_ratio=True),
-                    dict(type='RandomFlip'),
+                    dict(type='ResizeLP', keep_ratio=False),
+                    dict(type='RandomFlipLP'),
                     dict(
-                        type='Normalize',
+                        type='NormalizeLP',
                         mean=[123.675, 116.28, 103.53],
                         std=[58.395, 57.12, 57.375],
+                        mean_lp=[60, 60, 60],
+                        std_lp=[60, 50, 50],
                         to_rgb=True),
-                    dict(type='Pad', size_divisor=32),
-                    dict(type='ImageToTensor', keys=['img']),
-                    dict(type='Collect', keys=['img'])
+                    dict(type='PadLP', size_divisor=32),
+                    dict(type='ImageToTensorLP', keys=['img', 'lp']),
+                    dict(type='Collect', keys=['img', 'lp'])
                 ])
         ],
-        data_root='../stereo_datasets'))
+        data_root='/kaggle/input/kitti-compressed'))
 evaluation = dict(interval=1, metric='mAP')
 optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
@@ -291,7 +304,7 @@ lr_config = dict(
     warmup=None,
     warmup_iters=500,
     warmup_ratio=0.001,
-    step=[16, 19])
+    step=[16, 19, 30])
 runner = dict(type='EpochBasedRunner', max_epochs=40)
 checkpoint_config = dict(interval=1)
 log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])

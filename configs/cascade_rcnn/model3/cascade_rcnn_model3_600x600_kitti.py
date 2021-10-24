@@ -47,7 +47,7 @@ model = dict(
                 in_channels=256,
                 fc_out_channels=1024,
                 roi_feat_size=7,
-                num_classes=80,
+                num_classes=9,
                 bbox_coder=dict(
                     type='DeltaXYWHBBoxCoder',
                     target_means=[0.0, 0.0, 0.0, 0.0],
@@ -64,7 +64,7 @@ model = dict(
                 in_channels=256,
                 fc_out_channels=1024,
                 roi_feat_size=7,
-                num_classes=80,
+                num_classes=9,
                 bbox_coder=dict(
                     type='DeltaXYWHBBoxCoder',
                     target_means=[0.0, 0.0, 0.0, 0.0],
@@ -81,7 +81,7 @@ model = dict(
                 in_channels=256,
                 fc_out_channels=1024,
                 roi_feat_size=7,
-                num_classes=80,
+                num_classes=9,
                 bbox_coder=dict(
                     type='DeltaXYWHBBoxCoder',
                     target_means=[0.0, 0.0, 0.0, 0.0],
@@ -183,7 +183,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+    dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Normalize',
@@ -198,7 +198,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(1333, 800),
+        img_scale=(600, 600),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
@@ -214,8 +214,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=5,
+    workers_per_gpu=5,
     train=dict(
         type='KittiDataset',
         ann_file='train.txt',
@@ -223,7 +223,7 @@ data = dict(
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True),
-            dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+            dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
             dict(type='RandomFlip', flip_ratio=0.5),
             dict(
                 type='Normalize',
@@ -243,7 +243,7 @@ data = dict(
             dict(type='LoadImageFromFile'),
             dict(
                 type='MultiScaleFlipAug',
-                img_scale=(1333, 800),
+                img_scale=(600, 600),
                 flip=False,
                 transforms=[
                     dict(type='Resize', keep_ratio=True),
@@ -267,7 +267,7 @@ data = dict(
             dict(type='LoadImageFromFile'),
             dict(
                 type='MultiScaleFlipAug',
-                img_scale=(1333, 800),
+                img_scale=(600, 600),
                 flip=False,
                 transforms=[
                     dict(type='Resize', keep_ratio=True),
@@ -292,9 +292,9 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[16, 19])
-runner = dict(type='EpochBasedRunner', max_epochs=20)
-checkpoint_config = dict(interval=40)
-log_config = dict(interval=10, hooks=[dict(type='TextLoggerHook')])
+runner = dict(type='EpochBasedRunner', max_epochs=40)
+checkpoint_config = dict(interval=1)
+log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'

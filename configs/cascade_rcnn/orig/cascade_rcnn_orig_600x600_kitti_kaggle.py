@@ -183,7 +183,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
+    dict(type='Resize', img_scale=(600, 600), keep_ratio=False),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Normalize',
@@ -201,7 +201,7 @@ test_pipeline = [
         img_scale=(600, 600),
         flip=False,
         transforms=[
-            dict(type='Resize', keep_ratio=True),
+            dict(type='Resize', keep_ratio=False),
             dict(type='RandomFlip'),
             dict(
                 type='Normalize',
@@ -223,7 +223,7 @@ data = dict(
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True),
-            dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
+            dict(type='Resize', img_scale=(600, 600), keep_ratio=False),
             dict(type='RandomFlip', flip_ratio=0.5),
             dict(
                 type='Normalize',
@@ -246,7 +246,7 @@ data = dict(
                 img_scale=(600, 600),
                 flip=False,
                 transforms=[
-                    dict(type='Resize', keep_ratio=True),
+                    dict(type='Resize', keep_ratio=False),
                     dict(type='RandomFlip'),
                     dict(
                         type='Normalize',
@@ -270,7 +270,7 @@ data = dict(
                 img_scale=(600, 600),
                 flip=False,
                 transforms=[
-                    dict(type='Resize', keep_ratio=True),
+                    dict(type='Resize', keep_ratio=False),
                     dict(type='RandomFlip'),
                     dict(
                         type='Normalize',
