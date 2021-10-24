@@ -218,8 +218,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=15,
-    workers_per_gpu=15,
+    samples_per_gpu=10,
+    workers_per_gpu=10,
     train=dict(
         type='KittiDatasetLP2',
         ann_file='train.txt',
