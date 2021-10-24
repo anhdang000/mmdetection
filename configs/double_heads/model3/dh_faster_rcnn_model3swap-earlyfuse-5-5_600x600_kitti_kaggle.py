@@ -105,7 +105,7 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDatasetEarlyFuse55'
+dataset_type = 'KittiDatasetLP2'
 data_root = '/kaggle/input/kitti-compressed'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -150,7 +150,7 @@ data = dict(
     samples_per_gpu=4,
     workers_per_gpu=4,
     train=dict(
-        type='KittiDatasetEarlyFuse55',
+        type='KittiDatasetLP2',
         ann_file='train.txt',
         img_prefix='early-fuse/5-5',
         lp_prefix='image/image_2',
@@ -172,7 +172,7 @@ data = dict(
         ],
         data_root='/kaggle/input/kitti-compressed'),
     val=dict(
-        type='KittiDatasetEarlyFuse55',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='early-fuse/5-5',
         lp_prefix='image/image_2',
@@ -199,7 +199,7 @@ data = dict(
         ],
         data_root='/kaggle/input/kitti-compressed'),
     test=dict(
-        type='KittiDatasetEarlyFuse55',
+        type='KittiDatasetLP2',
         ann_file='val.txt',
         img_prefix='early-fuse/5-5',
         lp_prefix='image/image_2',
