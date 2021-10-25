@@ -176,14 +176,14 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100)))
-dataset_type = 'KittiDataset'
-data_root = '../stereo_datasets'
+dataset_type = 'IroadDataset'
+data_root = '../stereo_datasets/IROAD_kitti'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
+    dict(type='Resize', img_scale=(600, 600), keep_ratio=False),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Normalize',
@@ -201,7 +201,7 @@ test_pipeline = [
         img_scale=(600, 600),
         flip=False,
         transforms=[
-            dict(type='Resize', keep_ratio=True),
+            dict(type='Resize', keep_ratio=False),
             dict(type='RandomFlip'),
             dict(
                 type='Normalize',
@@ -214,16 +214,16 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=5,
-    workers_per_gpu=5,
+    samples_per_gpu=20,
+    workers_per_gpu=20,
     train=dict(
-        type='KittiDataset',
+        type='IroadDataset',
         ann_file='train.txt',
-        img_prefix='training/image_2',
+        img_prefix='image',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True),
-            dict(type='Resize', img_scale=(600, 600), keep_ratio=True),
+            dict(type='Resize', img_scale=(600, 600), keep_ratio=False),
             dict(type='RandomFlip', flip_ratio=0.5),
             dict(
                 type='Normalize',
@@ -234,11 +234,11 @@ data = dict(
             dict(type='DefaultFormatBundle'),
             dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
         ],
-        data_root='../stereo_datasets'),
+        data_root='../stereo_datasets/IROAD_kitti'),
     val=dict(
-        type='KittiDataset',
+        type='IroadDataset',
         ann_file='val.txt',
-        img_prefix='training/image_2',
+        img_prefix='image',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -246,7 +246,7 @@ data = dict(
                 img_scale=(600, 600),
                 flip=False,
                 transforms=[
-                    dict(type='Resize', keep_ratio=True),
+                    dict(type='Resize', keep_ratio=False),
                     dict(type='RandomFlip'),
                     dict(
                         type='Normalize',
@@ -258,11 +258,11 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        data_root='../stereo_datasets'),
+        data_root='../stereo_datasets/IROAD_kitti'),
     test=dict(
-        type='KittiDataset',
-        ann_file='train.txt',
-        img_prefix='training/image_2',
+        type='IroadDataset',
+        ann_file='val.txt',
+        img_prefix='image',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -270,7 +270,7 @@ data = dict(
                 img_scale=(600, 600),
                 flip=False,
                 transforms=[
-                    dict(type='Resize', keep_ratio=True),
+                    dict(type='Resize', keep_ratio=False),
                     dict(type='RandomFlip'),
                     dict(
                         type='Normalize',
@@ -282,7 +282,7 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        data_root='../stereo_datasets'))
+        data_root='../stereo_datasets/IROAD_kitti'))
 evaluation = dict(interval=1, metric='mAP')
 optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
@@ -291,7 +291,7 @@ lr_config = dict(
     warmup=None,
     warmup_iters=500,
     warmup_ratio=0.001,
-    step=[16, 19])
+    step=[16, 19, 30])
 runner = dict(type='EpochBasedRunner', max_epochs=40)
 checkpoint_config = dict(interval=1)
 log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
