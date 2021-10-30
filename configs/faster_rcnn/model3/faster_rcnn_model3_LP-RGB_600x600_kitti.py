@@ -148,8 +148,8 @@ data = dict(
     train=dict(
         type='KittiDatasetLP',
         ann_file='train.txt',
-        img_prefix='training/image_2',
-        lp_prefix='training/LTP-3',
+        img_prefix='training/LTP-3',
+        lp_prefix='training/image_2',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(type='LoadAnnotationsLP', with_bbox=True),
@@ -170,8 +170,8 @@ data = dict(
     val=dict(
         type='KittiDatasetLP',
         ann_file='val.txt',
-        img_prefix='training/image_2',
-        lp_prefix='training/LTP-3',
+        img_prefix='training/LTP-3',
+        lp_prefix='training/image_2',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
@@ -197,8 +197,8 @@ data = dict(
     test=dict(
         type='KittiDatasetLP',
         ann_file='val.txt',
-        img_prefix='training/image_2',
-        lp_prefix='training/LTP-3',
+        img_prefix='training/LTP-3',
+        lp_prefix='training/image_2',
         pipeline=[
             dict(type='LoadImageFromFileLP'),
             dict(
