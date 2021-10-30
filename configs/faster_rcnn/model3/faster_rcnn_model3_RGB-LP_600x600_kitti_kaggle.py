@@ -114,6 +114,8 @@ train_pipeline = [
         type='NormalizeLP',
         mean=[123.675, 116.28, 103.53],
         std=[58.395, 57.12, 57.375],
+        mean_lp=[60, 60, 60],
+        std_lp=[60, 50, 50],
         to_rgb=True),
     dict(type='PadLP', size_divisor=32),
     dict(type='DefaultFormatBundleLP'),
@@ -132,6 +134,8 @@ test_pipeline = [
                 type='NormalizeLP',
                 mean=[123.675, 116.28, 103.53],
                 std=[58.395, 57.12, 57.375],
+                mean_lp=[60, 60, 60],
+                std_lp=[60, 50, 50],
                 to_rgb=True),
             dict(type='PadLP', size_divisor=32),
             dict(type='ImageToTensorLP', keys=['img', 'lp']),
@@ -155,6 +159,8 @@ data = dict(
                 type='NormalizeLP',
                 mean=[123.675, 116.28, 103.53],
                 std=[58.395, 57.12, 57.375],
+                mean_lp=[60, 60, 60],
+                std_lp=[60, 50, 50],
                 to_rgb=True),
             dict(type='PadLP', size_divisor=32),
             dict(type='DefaultFormatBundleLP'),
@@ -179,6 +185,8 @@ data = dict(
                         type='NormalizeLP',
                         mean=[123.675, 116.28, 103.53],
                         std=[58.395, 57.12, 57.375],
+                        mean_lp=[60, 60, 60],
+                        std_lp=[60, 50, 50],
                         to_rgb=True),
                     dict(type='PadLP', size_divisor=32),
                     dict(type='ImageToTensorLP', keys=['img', 'lp']),
@@ -204,6 +212,8 @@ data = dict(
                         type='NormalizeLP',
                         mean=[123.675, 116.28, 103.53],
                         std=[58.395, 57.12, 57.375],
+                        mean_lp=[60, 60, 60],
+                        std_lp=[60, 50, 50],
                         to_rgb=True),
                     dict(type='PadLP', size_divisor=32),
                     dict(type='ImageToTensorLP', keys=['img', 'lp']),
@@ -220,7 +230,7 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[9, 16, 22])
-runner = dict(type='EpochBasedRunner', max_epochs=30)
+runner = dict(type='EpochBasedRunner', max_epochs=15)
 checkpoint_config = dict(interval=1)
 log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
