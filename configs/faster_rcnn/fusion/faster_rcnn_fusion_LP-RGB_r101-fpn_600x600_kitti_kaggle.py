@@ -236,7 +236,7 @@ log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = 'faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'
+load_from = 'faster_rcnn_r101_fpn_1x_coco_20200130-f513f705.pth'
 resume_from = None
 workflow = [('train', 1)]
 work_dir = './tutorial_exps'
