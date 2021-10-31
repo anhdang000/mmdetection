@@ -33,7 +33,7 @@ from .yolact import YOLACT
 from .yolo import YOLOV3
 from .yolof import YOLOF
 from .base_parallel import BaseDetectorParallel
-from .two_stage_parallel_1 import TwoStageDetectorParallel
+from .two_stage_parallel import TwoStageDetectorParallel
 from .faster_rcnn_parallel import FasterRCNNParallel
 from .cascade_rcnn_parallel import CascadeRCNNParallel
 
