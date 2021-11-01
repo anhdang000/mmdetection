@@ -9,7 +9,7 @@ model = dict(
         norm_cfg=dict(type='BN', requires_grad=True),
         norm_eval=True,
         style='pytorch',
-        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
+        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet101')),
     neck=dict(
         type='FPNParallel',
         in_channels=[256, 512, 1024, 2048],
@@ -311,7 +311,7 @@ log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook')])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = 'cascade_rcnn_r50_fpn_20e_coco_bbox_mAP-0.41_20200504_175131-e9872a90.pth'
+load_from = 'cascade_rcnn_r101_fpn_1x_coco_20200317-0b6a2fbf.pth'
 resume_from = None
 workflow = [('train', 1)]
 work_dir = './tutorial_exps'
