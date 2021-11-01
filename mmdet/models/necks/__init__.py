@@ -13,9 +13,10 @@ from .rfp import RFP
 from .ssd_neck import SSDNeck
 from .yolo_neck import YOLOV3Neck
 from .fpn_parallel import FPNParallel
+from .pafpn_parallel import PAFPNParallel
 
 __all__ = [
     'FPN', 'BFP', 'ChannelMapper', 'HRFPN', 'NASFPN', 'FPN_CARAFE', 'PAFPN',
     'NASFCOS_FPN', 'RFP', 'YOLOV3Neck', 'FPG', 'DilatedEncoder',
-    'CTResNetNeck', 'SSDNeck', 'FPNParallel'
+    'CTResNetNeck', 'SSDNeck', 'FPNParallel', 'PAFPNParallel'
 ]
