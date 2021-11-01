@@ -21,17 +21,19 @@ def single_gpu_test(model,
     model.eval()
     results = []
     dataset = data_loader.dataset
+    inf_times = []
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
         with torch.no_grad():
+            start = time.time()
             result = model(return_loss=False, rescale=True, **data)
-
+            inf_times.append(time.time() - start)
         batch_size = len(result)
         if show or out_dir:
             if batch_size == 1 and isinstance(data['img'][0], torch.Tensor):
-                img_tensor = data['img'][0]
+                img_tensor = data['lp'][0]
             else:
-                img_tensor = data['img'][0].data[0]
+                img_tensor = data['lp'][0].data[0]
             img_metas = data['img_metas'][0].data[0]
             imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
             assert len(imgs) == len(img_metas)
@@ -63,6 +65,7 @@ def single_gpu_test(model,
 
         for _ in range(batch_size):
             prog_bar.update()
+    print('\nInf:', min(inf_times))
     return results
 
 
