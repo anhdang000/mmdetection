@@ -11,7 +11,7 @@ model = dict(
         style='pytorch',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
-        type='FPNParallel',
+        type='FPNParallelCEN',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=5),
