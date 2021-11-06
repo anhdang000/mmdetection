@@ -162,7 +162,7 @@ class FPNParallelCEN(BaseModule):
                 self.fpn_convs.append(extra_fpn_conv)
 
         # Channel Exchange
-        self.in_channels_to_fuse = self.out_channels * len(self.in_channels)
+        self.in_channels_to_fuse = [self.out_channels] * len(self.in_channels)
         self.bns_stage_1 = [[nn.BatchNorm2d(n_channel)]*2 for n_channel in self.in_channels_to_fuse]
         self.cens_stage_1 = [Exchange(bn) for bn in self.bns_stage_1]
         self.bns_stage_2 = [[nn.BatchNorm2d(n_channel)]*2 for n_channel in self.in_channels_to_fuse]
