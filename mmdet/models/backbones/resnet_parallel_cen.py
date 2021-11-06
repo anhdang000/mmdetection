@@ -504,7 +504,7 @@ class ResNetParallelCEN(BaseModule):
 
         # Convolution layers after merge
         self.in_channels_to_fuse = [64, 64, 256, 512, 1024, 2048]
-        self.bns = [nn.BatchNorm2d(n_channel) for n_channel in self.in_channels_to_fuse]
+        self.bns = [[nn.BatchNorm2d(n_channel)]*2 for n_channel in self.in_channels_to_fuse]
         self.cens = [Exchange(bn) for bn in self.bns]
         
 
