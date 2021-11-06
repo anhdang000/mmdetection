@@ -186,7 +186,8 @@ class FPNParallelCEN(BaseModule):
         ]
 
         # Channel Exchange (Stage 1)
-        laterals1 = [self.cens_stage_1[i](l1, l2) for i, (l1, l2) in enumerate(zip(laterals1, laterals2))]
+        laterals1 = [self.cens_stage_1[i](l1, l2)[0] for i, (l1, l2) in enumerate(zip(laterals1, laterals2))]
+        laterals2 = [self.cens_stage_1[i](l1, l2)[1] for i, (l1, l2) in enumerate(zip(laterals1, laterals2))]
 
         # build top-down path
         used_backbone_levels = len(laterals1)
@@ -206,7 +207,8 @@ class FPNParallelCEN(BaseModule):
                     laterals2[i], size=prev_shape, **self.upsample_cfg)
 
         # Channel Exchange (Stage 2)
-        laterals1 = [self.cens_stage_2[i](l1, l2) for i, (l1, l2) in enumerate(zip(laterals1, laterals2))]
+        laterals1 = [self.cens_stage_1[i](l1, l2)[0] for i, (l1, l2) in enumerate(zip(laterals1, laterals2))]
+        laterals2 = [self.cens_stage_1[i](l1, l2)[1] for i, (l1, l2) in enumerate(zip(laterals1, laterals2))]
 
         # build outputs
         # part 1: from original levels
